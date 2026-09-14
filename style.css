@@ -1555,3 +1555,80 @@ footer {
     }
 
 }
+
+/* =========================================
+   ASPIN CMS PROMOTION CARDS
+   ========================================= */
+
+#promoGrid {
+    display: grid !important;
+    grid-template-columns: repeat(
+        3,
+        minmax(260px, 280px)
+    ) !important;
+    justify-content: center !important;
+    align-items: start !important;
+    gap: 24px !important;
+    width: 100% !important;
+}
+
+
+/* Keep every promotion card consistent */
+
+#promoGrid .promo-card {
+    width: 280px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+
+/* Consistent promotional image area */
+
+#promoGrid .promo-image {
+    width: 100% !important;
+    height: 180px !important;
+    min-height: 180px !important;
+    overflow: hidden !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+
+/* 2 cards or fewer still stay centered */
+
+@media (max-width: 1000px) {
+
+    #promoGrid {
+        grid-template-columns: repeat(
+            2,
+            minmax(260px, 280px)
+        ) !important;
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+    #promoGrid {
+        grid-template-columns: minmax(
+            0,
+            360px
+        ) !important;
+
+        padding: 0 20px !important;
+    }
+
+    #promoGrid .promo-card {
+        width: 100% !important;
+    }
+
+    #promoGrid .promo-image {
+        height: 200px !important;
+        min-height: 200px !important;
+    }
+
+}
