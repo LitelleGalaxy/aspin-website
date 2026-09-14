@@ -1506,22 +1506,23 @@ footer {
    DYNAMIC PROMOTIONS GRID
    ========================================= */
 
-.promo-grid {
-    display: grid;
+#promoGrid.promo-grid {
+    display: grid !important;
     grid-template-columns: repeat(
         auto-fit,
         minmax(260px, 280px)
-    );
-    justify-content: center;
-    gap: 22px;
-    width: 100%;
+    ) !important;
+    justify-content: center !important;
+    align-items: start;
+    gap: 22px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
-
-/* 1-2 cards stay centered */
-
-.promo-grid .promo-card {
-    width: 100%;
+#promoGrid .promo-card {
+    width: 100% !important;
+    margin: 0 !important;
 }
 
 
@@ -1529,13 +1530,11 @@ footer {
 
 @media (max-width: 900px) {
 
-    .promo-grid {
+    #promoGrid.promo-grid {
         grid-template-columns: repeat(
             auto-fit,
             minmax(250px, 280px)
-        );
-
-        gap: 20px;
+        ) !important;
     }
 
 }
@@ -1545,14 +1544,13 @@ footer {
 
 @media (max-width: 600px) {
 
-    .promo-grid {
+    #promoGrid.promo-grid {
         grid-template-columns: minmax(
             0,
             360px
-        );
+        ) !important;
 
-        justify-content: center;
-        gap: 20px;
+        justify-content: center !important;
         padding: 0 20px;
     }
 
