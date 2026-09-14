@@ -1555,21 +1555,3 @@ footer {
     }
 
 }
-/* =========================================
-   PROMOTION IMAGE CONSISTENCY
-   ========================================= */
-
-#promoGrid .promo-image {
-    height: 180px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#promoGrid .promo-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
