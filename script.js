@@ -452,3 +452,162 @@ if (form) {
     );
 
 }
+/* =========================================
+   DYNAMIC PROMOTIONS
+   ========================================= */
+
+async function loadPublicPromotions() {
+
+    const promoGrid = document.getElementById("promoGrid");
+
+    if (!promoGrid || typeof supabaseClient === "undefined") {
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("promotions")
+        .select("*")
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+
+    if (error) {
+
+        console.error(
+            "Unable to load promotions:",
+            error
+        );
+
+        return;
+    }
+
+    promoGrid.innerHTML = "";
+
+    if (!data || data.length === 0) {
+
+        promoGrid.innerHTML = `
+            <div class="promo-empty">
+                <p>No promotions available at this time.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach((promotion) => {
+
+        const card = document.createElement("article");
+
+        card.className = "promo-card";
+
+
+        /* IMAGE */
+
+        const image = document.createElement("div");
+
+        image.className = "promo-image";
+
+
+        if (promotion.image_url) {
+
+            image.style.backgroundImage =
+                `url("${promotion.image_url}")`;
+
+            image.style.backgroundSize = "cover";
+            image.style.backgroundPosition = "center";
+            image.style.backgroundRepeat = "no-repeat";
+
+        } else {
+
+            image.textContent = "ASPIN";
+
+        }
+
+
+        /* CONTENT */
+
+        const content = document.createElement("div");
+
+        content.className = "promo-content";
+
+
+        /* LABEL */
+
+        const label = document.createElement("p");
+
+        label.className = "promo-label";
+
+        label.textContent =
+            promotion.label || "FEATURED";
+
+
+        /* TITLE */
+
+        const title = document.createElement("h3");
+
+        title.textContent =
+            promotion.title;
+
+
+        /* DESCRIPTION */
+
+        const description = document.createElement("p");
+
+        description.textContent =
+            promotion.description || "";
+
+
+        /* BUTTON */
+
+        const button = document.createElement("a");
+
+        button.href =
+            promotion.button_url || "https://aspin.vip/";
+
+        button.textContent =
+            `${promotion.button_text || "LEARN MORE"} →`;
+
+        button.target = "_blank";
+        button.rel = "noopener noreferrer";
+
+
+        button.addEventListener("click", function () {
+
+            if (typeof trackEvent === "function") {
+
+                trackEvent(
+                    "promotion_click",
+                    {
+                        promotion_id: String(promotion.id),
+                        promotion_title: promotion.title
+                    }
+                );
+
+            }
+
+        });
+
+
+        /* BUILD CARD */
+
+        content.appendChild(label);
+        content.appendChild(title);
+        content.appendChild(description);
+        content.appendChild(button);
+
+        card.appendChild(image);
+        card.appendChild(content);
+
+        promoGrid.appendChild(card);
+
+    });
+
+}
+
+
+/* Load promotions when page is ready */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadPublicPromotions
+);
