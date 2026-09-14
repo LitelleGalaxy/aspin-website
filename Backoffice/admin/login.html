@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASPIN Admin Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div>
+        <div class="brand-name">ASPIN</div>
+        <div class="brand-sub">ADMIN PORTAL</div>
+      </div>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to manage ASPIN.SITE.</p>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+
+      <label>Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+
+      <button class="primary-btn" type="submit">SIGN IN</button>
+      <p id="loginError" class="error"></p>
+    </form>
+
+    <a class="back-link" href="../index.html">← Back to website</a>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>
