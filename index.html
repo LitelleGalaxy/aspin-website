@@ -73,11 +73,18 @@
         <img src="logo1.png" alt="ASPIN">
     </a>
 
+    <input
+        type="checkbox"
+        id="mobile-menu-toggle"
+        class="mobile-menu-toggle"
+        aria-label="Toggle navigation"
+    >
+
     <nav>
         <a href="#promotions" data-track="promotions_click">
             PROMOTIONS
         </a>
-        
+
         <a href="#why" data-track="why_aspin_click">
             WHY ASPIN
         </a>
@@ -89,16 +96,29 @@
         <a href="#faq" data-track="faq_click">
             FAQ
         </a>
-
     </nav>
 
-    <a
-        href="https://aspin.vip/"
-        class="register-btn"
-        data-track="navbar_register"
-    >
-        REGISTER NOW
-    </a>
+    <div class="navbar-actions">
+
+        <a
+            href="https://aspin.vip/"
+            class="register-btn"
+            data-track="navbar_register"
+        >
+            REGISTER NOW
+        </a>
+
+        <label
+            for="mobile-menu-toggle"
+            class="mobile-menu-button"
+            aria-label="Open navigation menu"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+
+    </div>
 
 </header>
 
@@ -150,7 +170,18 @@
             </a>
 
         </div>
+        <div class="responsible-gaming">
 
+            <span class="age-disclosure">
+                21+
+            </span>
+
+            <div class="responsible-gaming-text">
+                <strong>GAMBLING FOR 21 YEARS OLD AND ABOVE ONLY</strong>
+                <span>Gambling Can Be Addictive, Know When to Stop.</span>
+            </div>
+
+        </div>
     </div>
 
 </section>
@@ -270,12 +301,11 @@
             </div>
 
             <h3>
-                CONVENIENT ACCESS
+                SIMPLE ACCESS
             </h3>
 
             <p>
-                Access the platform across supported devices
-                with a straightforward user experience.
+                Access the platform across supported devices. 
             </p>
 
         </div>
@@ -288,7 +318,7 @@
             </div>
 
             <h3>
-                PROMOTIONAL UPDATES
+                CURRENT OFFERS
             </h3>
 
             <p>
@@ -306,12 +336,12 @@
             </div>
 
             <h3>
-                EASY PAYMENTS
+                PAYMENT OPTIONS
             </h3>
 
             <p>
-                Explore available deposit and withdrawal
-                methods supported by the platform.
+                View the payment methods currently
+                supported by the platform. 
             </p>
 
         </div>
@@ -415,85 +445,126 @@
 
     <div class="subscribe-content">
 
-        <p class="eyebrow">
-            STAY CONNECTED
-        </p>
-
         <h2>
-            NEVER MISS AN<br>
-            <span>ASPIN UPDATE</span>
+            STAY IN THE<br>
+            ASPIN <span>LOOP</span>  
         </h2>
 
         <p>
-            Receive information about promotions,
-            campaigns and platform announcements.
+            Get ASpin promotions, campaign updates and 
+            platform announcements delivered to your inbox. 
         </p>
 
         <form id="subscribeForm">
 
-            <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Full Name"
-                autocomplete="name"
-                required
-            >
+    <!-- EMAIL FIRST AND REQUIRED -->
+    <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Email Address"
+        autocomplete="email"
+        required
+    >
 
-            <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Email Address"
-                autocomplete="email"
-                required
-            >
+    <!-- NAME OPTIONAL -->
+    <input
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Name"
+        autocomplete="name"
+    >
 
-            <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="Mobile Number"
-                autocomplete="tel"
-                required
-            >
+    <!-- MOBILE OPTIONAL -->
+    <input
+        type="tel"
+        id="phone"
+        name="phone"
+        placeholder="Mobile Number"
+        autocomplete="tel"
+    >
 
-            <label class="consent">
+    <!-- CLEAR MARKETING CONSENT -->
+    <label class="consent">
+        <input
+            type="checkbox"
+            id="consent"
+            name="consent"
+            required
+        >
 
-                <input
-                    type="checkbox"
-                    id="consent"
-                    required
-                >
+        <span>
+            I consent to receive promotional communications from ASPIN,
+            including promotions, offers, campaigns, and platform updates,
+            by email and/or SMS.
+        </span>
+    </label>
 
-                <span>
-                    I agree to receive promotional communications
-                    from ASPIN by email and/or SMS.
-                </span>
+    <!-- PRIVACY POLICY -->
+    <p class="privacy-consent">
+        By subscribing, you agree to receive the communications described above.
+        See our
+        <a href="privacy-policy.html" target="_blank" rel="noopener">
+            Privacy Policy
+        </a>
+        for information about how your personal data is collected and used.
+    </p>
 
-            </label>
+    <button
+        type="submit"
+        class="gold-btn"
+        data-track="newsletter_submit"
+    >
+        SUBSCRIBE
+    </button>
+
+    <p class="form-note">
+        You can unsubscribe from promotional communications at any time
+        by following the unsubscribe instructions in our messages.
+    </p>
+
+</form>
+
+        <!-- SUBSCRIPTION SUCCESS POPUP -->
+<div id="successModal" class="success-modal">
+    <div class="success-modal-overlay"></div>
+
+    <div class="success-modal-box">
+
+        <h2>YOU'RE IN</h2>
+
+        <p>
+            Thanks for subscribing to ASPIN updates.
+        </p>
+
+        <p>
+            We'll send you information about promotions,
+            campaigns and platform announcements.
+        </p>
+
+        <div class="success-modal-actions">
 
             <button
-                type="submit"
-                class="gold-btn"
-                data-track="newsletter_submit"
+                type="button"
+                id="explorePromotionsBtn"
+                class="success-primary-btn"
             >
-                SUBSCRIBE
+                EXPLORE CURRENT PROMOTIONS
             </button>
 
-            <p class="form-note">
-                You may unsubscribe from promotional communications
-                at any time.
-            </p>
+            <button
+                type="button"
+                id="exitSuccessBtn"
+                class="success-secondary-btn"
+            >
+                EXIT
+            </button>
 
-        </form>
-
-        <div
-            id="successMessage"
-            class="success-message"
-        >
-            Thank you for subscribing to ASPIN updates.
         </div>
+
+    </div>
+</div>
 
     </div>
 
@@ -720,7 +791,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="Backoffice/supabase.js"></script>
+<script src="admin/supabase.js"></script>
 <script src="script.js"></script>
 
 </body>
