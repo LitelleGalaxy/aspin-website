@@ -1,613 +1,942 @@
-/* script.js */
+/* =========================================================
+   ASPIN.SITE FRONTEND JAVASCRIPT
+   ========================================================= */
+
+const GAMING_SITE_URL = "https://aspin.vip/";
 
 
-/* ================================
-   UTM TRACKING
-================================ */
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
 
-const params = new URLSearchParams(
-    window.location.search
-);
+function escapeHTML(value) {
+    if (value === null || value === undefined) {
+        return "";
+    }
 
-
-const currentUTM = {
-
-    utm_source:
-        params.get("utm_source"),
-
-    utm_medium:
-        params.get("utm_medium"),
-
-    utm_campaign:
-        params.get("utm_campaign"),
-
-    utm_content:
-        params.get("utm_content"),
-
-    utm_term:
-        params.get("utm_term")
-
-};
-
-
-/* Save UTM information */
-
-if (currentUTM.utm_source) {
-
-    localStorage.setItem(
-        "aspin_utm",
-        JSON.stringify(currentUTM)
-    );
-
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
-/* Retrieve saved UTM information */
-
-const savedUTM = JSON.parse(
-    localStorage.getItem("aspin_utm") || "{}"
-);
-
-
-/* ================================
-   TRAFFIC SOURCE
-================================ */
-
-function getTrafficSource() {
-
-    const source =
-        savedUTM.utm_source;
-
-
-    if (source) {
-        return source;
+function safeURL(value, fallback = "#") {
+    if (!value) {
+        return fallback;
     }
 
+    try {
+        const url = new URL(value, window.location.origin);
 
-    const referrer =
-        document.referrer;
+        if (
+            url.protocol === "http:" ||
+            url.protocol === "https:"
+        ) {
+            return url.href;
+        }
 
-
-    if (!referrer) {
-        return "direct";
+    } catch (error) {
+        return fallback;
     }
 
-
-    if (
-        referrer.includes(
-            "facebook.com"
-        )
-    ) {
-        return "facebook";
-    }
-
-
-    if (
-        referrer.includes(
-            "google."
-        )
-    ) {
-        return "google";
-    }
-
-
-    if (
-        referrer.includes(
-            "tiktok.com"
-        )
-    ) {
-        return "tiktok";
-    }
-
-
-    if (
-        referrer.includes(
-            "instagram.com"
-        )
-    ) {
-        return "instagram";
-    }
-
-
-    if (
-        referrer.includes(
-            "youtube.com"
-        )
-    ) {
-        return "youtube";
-    }
-
-
-    return "referral";
+    return fallback;
 }
 
 
-/* ================================
+/* =========================================================
+   SESSION + UTM TRACKING
+   ========================================================= */
+
+function getSessionId() {
+
+    let sessionId =
+        sessionStorage.getItem("aspin_session_id");
+
+    if (!sessionId) {
+
+        sessionId =
+            `${Date.now()}-${Math.random()
+                .toString(36)
+                .slice(2)}`;
+
+        sessionStorage.setItem(
+            "aspin_session_id",
+            sessionId
+        );
+    }
+
+    return sessionId;
+}
+
+
+function getUTMData() {
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    return {
+        source:
+            params.get("utm_source") || "direct",
+
+        medium:
+            params.get("utm_medium") || "none",
+
+        campaign:
+            params.get("utm_campaign") || null,
+
+        term:
+            params.get("utm_term") || null,
+
+        content:
+            params.get("utm_content") || null
+    };
+}
+
+
+/* =========================================================
    ANALYTICS
-================================ */
+   ========================================================= */
 
-function trackEvent(
+async function trackEvent(
+    eventName,
+    additionalData = {}
+) {
+
+    try {
+
+        if (
+            !eventName ||
+            eventName.length > 40
+        ) {
+            return;
+        }
+
+        const utm = getUTMData();
+
+        const eventData = {
+            event_name: eventName,
+            session_id: getSessionId(),
+            page_url: window.location.href,
+            source: utm.source,
+            utm_source: utm.source,
+            utm_medium: utm.medium,
+            utm_campaign: utm.campaign,
+            utm_term: utm.term,
+            utm_content: utm.content,
+            ...additionalData
+        };
+
+        await supabaseClient
+            .from("analytics_events")
+            .insert(eventData);
+
+    } catch (error) {
+
+        console.warn(
+            "Analytics error:",
+            error
+        );
+
+    }
+}
+
+
+/* =========================================================
+   META PIXEL
+   ========================================================= */
+
+function trackMetaEvent(
     eventName,
     data = {}
 ) {
 
-    const eventData = {
-
-        ...data,
-
-        traffic_source:
-            getTrafficSource(),
-
-        ...savedUTM
-
-    };
-
-
-    /* Google Analytics */
-
     if (
-        typeof gtag === "function"
+        typeof window.fbq === "function"
     ) {
 
-        gtag(
-            "event",
+        window.fbq(
+            "track",
             eventName,
-            eventData
+            data
         );
 
     }
-
-
-    /* Meta Pixel */
-
-    if (
-        typeof fbq === "function"
-    ) {
-
-        fbq(
-            "trackCustom",
-            eventName,
-            eventData
-        );
-
-    }
-
-
-    /* Development console */
-
-    console.log(
-        "ASPIN EVENT:",
-        eventName,
-        eventData
-    );
-
 }
 
 
-/* ================================
-   PAGE VIEW
-================================ */
+/* =========================================================
+   TRACK CLICKABLE EVENTS
+   ========================================================= */
 
-trackEvent(
-    "aspin_page_view",
-    {
-        page:
-            window.location.pathname
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const target =
+            event.target.closest(
+                "[data-event]"
+            );
+
+        if (!target) {
+            return;
+        }
+
+        const eventName =
+            target.dataset.event;
+
+        trackEvent(eventName);
+
+        if (
+            eventName ===
+            "register_click"
+        ) {
+
+            trackMetaEvent(
+                "Lead"
+            );
+
+        }
+
     }
 );
 
 
-/* ================================
-   ALL TRACKED BUTTONS
-================================ */
+/* =========================================================
+   PROMOTIONS
+   ========================================================= */
 
-document
-    .querySelectorAll(
-        "[data-track]"
-    )
-    .forEach(element => {
+async function loadPromotions() {
 
-        element.addEventListener(
-            "click",
-            function() {
-
-                trackEvent(
-                    this.dataset.track,
-                    {
-
-                        button_text:
-                            this.textContent.trim(),
-
-                        page:
-                            window.location.pathname
-
-                    }
-                );
-
-            }
+    const container =
+        document.getElementById(
+            "promotionsGrid"
         );
 
-    });
-
-
-/* ================================
-   FAQ TRACKING
-================================ */
-
-document
-    .querySelectorAll(
-        "details[data-track]"
-    )
-    .forEach(item => {
-
-        item.addEventListener(
-            "toggle",
-            function() {
-
-                if (this.open) {
-
-                    trackEvent(
-                        this.dataset.track,
-                        {
-                            action: "open"
-                        }
-                    );
-
-                }
-
-            }
-        );
-
-    });
-
-
-/* ================================
-   REGISTER TRACKING
-================================ */
-
-document
-    .querySelectorAll(
-        'a[href*="aspin.vip"]'
-    )
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                trackEvent(
-                    "register_click",
-                    {
-
-                        button:
-                            this.dataset.track ||
-                            this.textContent.trim(),
-
-                        destination:
-                            "aspin.vip"
-
-                    }
-                );
-
-            }
-        );
-
-    });
-
-
-/* ================================
-   STAY UPDATED BUTTON
-================================ */
-
-document
-    .querySelectorAll('a[href="#subscribe"]')
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                trackEvent(
-                    "stay_updated",
-                    {
-                        button_text:
-                            this.textContent.trim(),
-
-                        destination:
-                            "subscribe_section",
-
-                        page:
-                            window.location.pathname
-                    }
-                );
-
-            }
-        );
-
-    });
-
-
-/* ================================
-   NEWSLETTER
-================================ */
-
-const form =
-    document.getElementById(
-        "subscribeForm"
-    );
-
-
-const success =
-    document.getElementById(
-        "successMessage"
-    );
-
-
-if (form) {
-
-    form.addEventListener(
-        "submit",
-        function(event) {
-
-            event.preventDefault();
-
-
-            const name =
-                document
-                    .getElementById("name")
-                    .value
-                    .trim();
-
-
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
-
-
-            const phone =
-                document
-                    .getElementById("phone")
-                    .value
-                    .trim();
-
-
-            const consent =
-                document
-                    .getElementById("consent")
-                    .checked;
-
-
-            if (
-                !name ||
-                !email ||
-                !phone ||
-                !consent
-            ) {
-
-                alert(
-                    "Please complete all fields and agree to receive promotional communications."
-                );
-
-                return;
-
-            }
-
-
-            /* Google Analytics */
-
-            if (
-                typeof gtag === "function"
-            ) {
-
-                gtag(
-                    "event",
-                    "newsletter_subscribe",
-                    {
-
-                        method:
-                            "website",
-
-                        traffic_source:
-                            getTrafficSource(),
-
-                        ...savedUTM
-
-                    }
-                );
-
-            }
-
-
-            /* Meta Pixel */
-
-            if (
-                typeof fbq === "function"
-            ) {
-
-                fbq(
-                    "track",
-                    "Lead",
-                    {
-
-                        source:
-                            getTrafficSource()
-
-                    }
-                );
-
-            }
-
-
-            /* Success message */
-
-            success.style.display =
-                "block";
-
-
-            form.reset();
-
-        }
-    );
-
-}
-/* =========================================
-   DYNAMIC PROMOTIONS
-   ========================================= */
-
-async function loadPublicPromotions() {
-
-    const promoGrid = document.getElementById("promoGrid");
-
-    if (!promoGrid || typeof supabaseClient === "undefined") {
+    if (!container) {
         return;
     }
 
-    const { data, error } = await supabaseClient
+    const {
+        data,
+        error
+    } = await supabaseClient
         .from("promotions")
         .select("*")
         .eq("is_published", true)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
+        .order("sort_order", {
+            ascending: true
+        });
 
     if (error) {
 
         console.error(
-            "Unable to load promotions:",
+            "Promotions error:",
             error
         );
 
-        return;
-    }
-
-    promoGrid.innerHTML = "";
-
-    if (!data || data.length === 0) {
-
-        promoGrid.innerHTML = `
-            <div class="promo-empty">
-                <p>No promotions available at this time.</p>
+        container.innerHTML = `
+            <div class="loading-state">
+                Promotions are currently unavailable.
             </div>
         `;
 
         return;
     }
 
-    data.forEach((promotion) => {
+    if (!data || data.length === 0) {
 
-        const card = document.createElement("article");
+        container.innerHTML = `
+            <div class="loading-state">
+                No promotions are currently available.
+            </div>
+        `;
 
-        card.className = "promo-card";
+        return;
+    }
+
+    container.innerHTML =
+        data.map(
+            promotion => {
+
+                const image =
+                    safeURL(
+                        promotion.image_url,
+                        ""
+                    );
+
+                const buttonURL =
+                    safeURL(
+                        promotion.button_url ||
+                        GAMING_SITE_URL,
+                        GAMING_SITE_URL
+                    );
+
+                return `
+                    <article class="promo-card">
+
+                        ${
+                            image
+                                ? `
+                                    <img
+                                        src="${escapeHTML(image)}"
+                                        alt="${escapeHTML(
+                                            promotion.title
+                                        )}"
+                                        class="promo-image"
+                                        loading="lazy"
+                                    >
+                                `
+                                : `
+                                    <div class="promo-image"></div>
+                                `
+                        }
+
+                        <div class="promo-content">
+
+                            ${
+                                promotion.label
+                                    ? `
+                                        <div class="promo-label">
+                                            ${escapeHTML(
+                                                promotion.label
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            <h3>
+                                ${escapeHTML(
+                                    promotion.title
+                                )}
+                            </h3>
+
+                            ${
+                                promotion.description
+                                    ? `
+                                        <p>
+                                            ${escapeHTML(
+                                                promotion.description
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+                            <div class="promo-action">
+
+                                <a
+                                    href="${escapeHTML(
+                                        buttonURL
+                                    )}"
+                                    class="btn btn-secondary"
+                                    ${
+                                        buttonURL.startsWith(
+                                            "http"
+                                        )
+                                            ? `
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            `
+                                            : ""
+                                    }
+                                    data-event="promotion_click"
+                                >
+                                    ${escapeHTML(
+                                        promotion.button_text ||
+                                        "LEARN MORE"
+                                    )}
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+                `;
+            }
+        ).join("");
+}
 
 
-        /* IMAGE */
+/* =========================================================
+   PAYMENTS
+   ========================================================= */
 
-        const image = document.createElement("div");
+async function loadPayments() {
 
-        image.className = "promo-image";
+    const container =
+        document.getElementById(
+            "paymentsGrid"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("payment_methods")
+        .select("*")
+        .eq("is_published", true)
+        .order("sort_order", {
+            ascending: true
+        });
+
+    if (error) {
+
+        console.error(
+            "Payments error:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="loading-state">
+                Payment information is currently unavailable.
+            </div>
+        `;
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        container.innerHTML = `
+            <div class="loading-state">
+                No payment methods are currently available.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        data.map(
+            payment => {
+
+                const name =
+                    payment.name ||
+                    payment.title ||
+                    "Payment Method";
+
+                return `
+                    <article class="payment-card">
+
+                        ${
+                            payment.image_url
+                                ? `
+                                    <img
+                                        src="${escapeHTML(
+                                            payment.image_url
+                                        )}"
+                                        alt="${escapeHTML(
+                                            name
+                                        )}"
+                                        class="payment-image"
+                                        loading="lazy"
+                                    >
+                                `
+                                : ""
+                        }
+
+                        <h3>
+                            ${escapeHTML(name)}
+                        </h3>
+
+                        ${
+                            payment.description
+                                ? `
+                                    <p>
+                                        ${escapeHTML(
+                                            payment.description
+                                        )}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                    </article>
+                `;
+            }
+        ).join("");
+}
 
 
-        if (promotion.image_url) {
+/* =========================================================
+   FAQ
+   ========================================================= */
 
-            image.style.backgroundImage =
-                `url("${promotion.image_url}")`;
+async function loadFAQs() {
 
-            image.style.backgroundSize = "cover";
-            image.style.backgroundPosition = "center";
-            image.style.backgroundRepeat = "no-repeat";
+    const container =
+        document.getElementById(
+            "faqList"
+        );
 
-        } else {
+    if (!container) {
+        return;
+    }
 
-            image.textContent = "ASPIN";
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("faqs")
+        .select("*")
+        .eq("is_published", true)
+        .order("sort_order", {
+            ascending: true
+        });
+
+    if (error) {
+
+        console.error(
+            "FAQ error:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="loading-state">
+                FAQs are currently unavailable.
+            </div>
+        `;
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        container.innerHTML = `
+            <div class="loading-state">
+                No FAQs are currently available.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        data.map(
+            faq => {
+
+                const question =
+                    faq.question ||
+                    faq.title ||
+                    "";
+
+                const answer =
+                    faq.answer ||
+                    faq.description ||
+                    "";
+
+                return `
+                    <div class="faq-item">
+
+                        <button
+                            class="faq-question"
+                            type="button"
+                        >
+
+                            <span>
+                                ${escapeHTML(
+                                    question
+                                )}
+                            </span>
+
+                            <span class="faq-icon">
+                                +
+                            </span>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <div class="faq-answer-inner">
+                                ${escapeHTML(
+                                    answer
+                                )}
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+            }
+        ).join("");
+
+
+    setupFAQAccordion();
+}
+
+
+function setupFAQAccordion() {
+
+    const questions =
+        document.querySelectorAll(
+            ".faq-question"
+        );
+
+    questions.forEach(
+        question => {
+
+            question.addEventListener(
+                "click",
+                function () {
+
+                    const item =
+                        this.closest(
+                            ".faq-item"
+                        );
+
+                    const answer =
+                        item.querySelector(
+                            ".faq-answer"
+                        );
+
+                    const isActive =
+                        item.classList.contains(
+                            "active"
+                        );
+
+
+                    document
+                        .querySelectorAll(
+                            ".faq-item.active"
+                        )
+                        .forEach(
+                            activeItem => {
+
+                                activeItem.classList.remove(
+                                    "active"
+                                );
+
+                                activeItem
+                                    .querySelector(
+                                        ".faq-answer"
+                                    )
+                                    .style.maxHeight =
+                                    null;
+                            }
+                        );
+
+
+                    if (!isActive) {
+
+                        item.classList.add(
+                            "active"
+                        );
+
+                        answer.style.maxHeight =
+                            answer.scrollHeight +
+                            "px";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   SITE SETTINGS
+   ========================================================= */
+
+async function loadSiteSettings() {
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("site_settings")
+            .select("*");
+
+        if (error) {
+            console.warn(
+                "Settings error:",
+                error
+            );
+            return;
+        }
+
+        if (!data) {
+            return;
+        }
+
+        const settings = {};
+
+        data.forEach(
+            item => {
+                settings[item.key] =
+                    item.value;
+            }
+        );
+
+        if (
+            settings.site_name
+        ) {
+
+            document.title =
+                `${settings.site_name} | Official`;
 
         }
 
+        const description =
+            document.querySelector(
+                'meta[name="description"]'
+            );
 
-        /* CONTENT */
+        if (
+            description &&
+            settings.site_description
+        ) {
 
-        const content = document.createElement("div");
+            description.setAttribute(
+                "content",
+                settings.site_description
+            );
 
-        content.className = "promo-content";
+        }
 
+    } catch (error) {
 
-        /* LABEL */
+        console.warn(
+            "Unable to load settings:",
+            error
+        );
 
-        const label = document.createElement("p");
-
-        label.className = "promo-label";
-
-        label.textContent =
-            promotion.label || "FEATURED";
-
-
-        /* TITLE */
-
-        const title = document.createElement("h3");
-
-        title.textContent =
-            promotion.title;
-
-
-        /* DESCRIPTION */
-
-        const description = document.createElement("p");
-
-        description.textContent =
-            promotion.description || "";
+    }
+}
 
 
-        /* BUTTON */
+/* =========================================================
+   SUBSCRIPTION
+   ========================================================= */
 
-        const button = document.createElement("a");
+const subscribeForm =
+    document.getElementById(
+        "subscribeForm"
+    );
 
-        button.href =
-            promotion.button_url || "https://aspin.vip/";
+if (subscribeForm) {
 
-        button.textContent =
-            `${promotion.button_text || "LEARN MORE"} →`;
+    subscribeForm.addEventListener(
+        "submit",
+        async function (event) {
 
-        button.target = "_blank";
-        button.rel = "noopener noreferrer";
+            event.preventDefault();
+
+            const email =
+                document.getElementById(
+                    "subscriberEmail"
+                ).value.trim();
+
+            const phone =
+                document.getElementById(
+                    "subscriberPhone"
+                ).value.trim();
+
+            const consent =
+                document.getElementById(
+                    "subscriberConsent"
+                ).checked;
+
+            const message =
+                document.getElementById(
+                    "subscribeMessage"
+                );
 
 
-        button.addEventListener("click", function () {
+            if (!consent) {
 
-            if (typeof trackEvent === "function") {
+                message.textContent =
+                    "Please accept the subscription consent.";
 
-                trackEvent(
-                    "promotion_click",
-                    {
-                        promotion_id: String(promotion.id),
-                        promotion_title: promotion.title
+                return;
+            }
+
+
+            message.textContent =
+                "Submitting...";
+
+
+            const {
+                error
+            } = await supabaseClient
+                .from("subscribers")
+                .insert({
+                    email: email,
+                    phone: phone,
+                    consent: true,
+                    is_active: true
+                });
+
+
+            if (error) {
+
+                console.error(
+                    "Subscription error:",
+                    error
+                );
+
+                if (
+                    error.code ===
+                    "23505"
+                ) {
+
+                    message.textContent =
+                        "This email is already subscribed.";
+
+                } else {
+
+                    message.textContent =
+                        "Unable to subscribe right now. Please try again.";
+
+                }
+
+                return;
+            }
+
+
+            message.textContent =
+                "Thank you. You are now subscribed.";
+
+            subscribeForm.reset();
+
+            trackEvent(
+                "newsletter_subscribe",
+                {
+                    subscription_method:
+                        "website_form"
+                }
+            );
+
+            trackMetaEvent(
+                "CompleteRegistration"
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   MOBILE NAVIGATION
+   ========================================================= */
+
+const mobileMenuBtn =
+    document.getElementById(
+        "mobileMenuBtn"
+    );
+
+const mobileNav =
+    document.getElementById(
+        "mobileNav"
+    );
+
+
+if (
+    mobileMenuBtn &&
+    mobileNav
+) {
+
+    mobileMenuBtn.addEventListener(
+        "click",
+        function () {
+
+            const isOpen =
+                mobileNav.classList.toggle(
+                    "active"
+                );
+
+            mobileMenuBtn.setAttribute(
+                "aria-expanded",
+                isOpen
+            );
+
+        }
+    );
+
+
+    mobileNav
+        .querySelectorAll("a")
+        .forEach(
+            link => {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        mobileNav.classList.remove(
+                            "active"
+                        );
+
+                        mobileMenuBtn.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
                     }
                 );
 
             }
+        );
+}
 
-        });
+
+/* =========================================================
+   PAGE VIEW
+   ========================================================= */
+
+trackEvent(
+    "page_view",
+    {
+        page_title:
+            document.title
+    }
+);
 
 
-        /* BUILD CARD */
+/* =========================================================
+   CURRENT YEAR
+   ========================================================= */
 
-        content.appendChild(label);
-        content.appendChild(title);
-        content.appendChild(description);
-        content.appendChild(button);
+const year =
+    document.getElementById(
+        "currentYear"
+    );
 
-        card.appendChild(image);
-        card.appendChild(content);
+if (year) {
 
-        promoGrid.appendChild(card);
-
-    });
+    year.textContent =
+        new Date().getFullYear();
 
 }
 
 
-/* Load promotions when page is ready */
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    loadPublicPromotions
+    async function () {
+
+        await Promise.all([
+            loadPromotions(),
+            loadPayments(),
+            loadFAQs(),
+            loadSiteSettings()
+        ]);
+
+    }
 );
