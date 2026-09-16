@@ -1,0 +1,1645 @@
+/* =========================================================
+   ASPIN BACK OFFICE
+   FINAL SHARED STYLES
+========================================================= */
+
+:root {
+  --black: #080808;
+  --panel: #111111;
+  --panel-2: #171717;
+  --red: #9d1018;
+  --red-bright: #c91d27;
+  --gold: #c8a45a;
+  --cream: #f3eee4;
+  --muted: #99958d;
+  --border: rgba(200, 164, 90, .22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--black);
+  color: var(--cream);
+  font-family: Inter, Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Consistent form control typography */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+
+/* =========================================================
+   LOGIN PAGE
+========================================================= */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background:
+    radial-gradient(
+      circle at 50% 15%,
+      rgba(157, 16, 24, .22),
+      transparent 38%
+    ),
+    var(--black);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  padding: 42px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: Georgia, serif;
+  font-size: 24px;
+}
+
+.brand-name {
+  letter-spacing: .2em;
+  font-weight: 800;
+}
+
+.brand-sub {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: .25em;
+}
+
+.login-card h1 {
+  margin: 34px 0 8px;
+  font-size: 34px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+
+/* LOGIN FORM */
+
+.login-card form {
+  width: 100%;
+}
+
+.login-card form label {
+  display: block;
+  margin: 24px 0 8px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.login-card form input {
+  display: block;
+  width: 100%;
+  height: 46px;
+  padding: 12px 14px;
+  color: var(--cream);
+  background: #0b0b0b;
+  border: 1px solid #333;
+  outline: none;
+}
+
+.login-card form input:focus {
+  border-color: var(--gold);
+}
+
+
+/* FIXED SIGN-IN BUTTON SPACING */
+
+.login-card form .primary-btn {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gold);
+  background: var(--red);
+  color: #fff;
+  padding: 14px 18px;
+  cursor: pointer;
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+
+.login-card form .primary-btn:hover {
+  background: var(--red-bright);
+}
+
+.error {
+  color: #ff6f78;
+  min-height: 20px;
+  margin: 12px 0 0;
+  font-size: 13px;
+}
+
+.back-link {
+  display: block;
+  margin-top: 28px;
+  color: var(--gold);
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   ADMIN APPLICATION
+========================================================= */
+
+.app-shell,
+.admin-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ONE CONSISTENT SIDEBAR FOR ALL ADMIN PAGES
+========================================================= */
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  flex: 0 0 250px;
+
+  min-height: 100vh;
+  padding: 26px 18px;
+
+  border-right: 1px solid var(--border);
+  background: #0b0b0b;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 28px;
+}
+
+.sidebar-brand .brand-mark {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--gold);
+  color: var(--gold);
+
+  font-family: Georgia, serif;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.sidebar-brand strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: .2em;
+  font-weight: 800;
+}
+
+.sidebar-brand span {
+  display: block;
+  color: var(--gold);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: .25em;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 45px;
+  padding: 0 12px;
+
+  color: var(--muted);
+  border-left: 2px solid transparent;
+
+  font-family: Inter, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+
+  box-sizing: border-box;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  color: var(--cream);
+  background: rgba(157, 16, 24, .14);
+  border-left-color: var(--gold);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 46px;
+  min-height: 46px;
+
+  margin-top: auto;
+  padding: 0 18px;
+
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+
+  cursor: pointer;
+
+  font-family: Inter, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+
+.logout-btn:hover {
+  background: rgba(200, 164, 90, .08);
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   SAME SIZE / SAME SPACING ON EVERY ADMIN PAGE
+========================================================= */
+
+.content,
+.admin-main {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+
+  padding: 42px;
+}
+
+
+/* =========================================================
+   TOP BAR / PAGE HEADER
+========================================================= */
+
+.topbar,
+.page-header {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.topbar h1,
+.page-header h1 {
+  margin: 5px 0 0;
+}
+
+.page-header p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.admin-email {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-btn,
+.secondary-btn,
+.danger-btn {
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--gold);
+  background: var(--red);
+  color: #fff;
+
+  padding: 13px 20px;
+  letter-spacing: 1px;
+}
+
+.primary-btn:hover {
+  background: var(--red-bright);
+}
+
+.secondary-btn {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 11px 18px;
+}
+
+.secondary-btn:hover {
+  background: rgba(212, 175, 55, .08);
+}
+
+.danger-btn {
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid #7c2727;
+  padding: 10px 15px;
+}
+
+.danger-btn:hover {
+  background: rgba(180, 30, 30, .15);
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.stat-card,
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.stat-card {
+  padding: 24px;
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 16px;
+  color: var(--gold);
+  font-size: 36px;
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.panel {
+  padding: 26px;
+}
+
+.panel-heading {
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.quick-actions a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 64px;
+
+  background: var(--panel-2);
+  border: 1px solid #3a3020;
+
+  color: #fff;
+  padding: 14px 18px;
+
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+
+.quick-actions a:hover {
+  background: rgba(200, 164, 90, .08);
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 18px 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+}
+
+.status-ok {
+  color: #8dd49a;
+}
+
+.status-warning {
+  color: #e9b96e;
+}
+
+
+/* =========================================================
+   PROMOTIONS PAGE
+========================================================= */
+
+.promotions-list {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+}
+
+.promotion-card {
+  width: 100%;
+  background: #111;
+  border: 1px solid #3a3020;
+
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) auto;
+
+  min-height: 150px;
+}
+
+.promotion-image {
+  width: 220px;
+  height: 150px;
+  object-fit: cover;
+  background: #080808;
+}
+
+.promotion-image.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.promotion-content {
+  padding: 20px;
+  min-width: 0;
+}
+
+.promotion-label {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.promotion-content h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.promotion-content p {
+  color: #aaa;
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.promotion-meta {
+  color: #777;
+  font-size: 12px;
+}
+
+.promotion-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 20px;
+  min-width: 130px;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.status.published {
+  color: #65e89a;
+  border: 1px solid #27643f;
+  background: rgba(50, 150, 90, .08);
+}
+
+.status.draft {
+  color: var(--gold);
+  border: 1px solid #715e21;
+  background: rgba(212, 175, 55, .06);
+}
+
+.empty-state {
+  width: 100%;
+  border: 1px dashed #3a3020;
+  padding: 60px 20px;
+  text-align: center;
+  color: #777;
+}
+
+.empty-state h2 {
+  color: #ddd;
+  margin-bottom: 8px;
+}
+
+.loading {
+  color: var(--gold);
+  padding: 30px 0;
+}
+
+.error-message {
+  color: #ff7777;
+  background: rgba(150, 20, 20, .12);
+  border: 1px solid #632323;
+  padding: 15px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, .82);
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  z-index: 9999;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  width: min(700px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: #111;
+  border: 1px solid #4a3d22;
+
+  padding: 30px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: 0;
+  color: #aaa;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+
+  color: #ddd;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+
+  background: #080808;
+  color: #fff;
+
+  border: 1px solid #3a3a3a;
+
+  padding: 12px;
+
+  font-family: inherit;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--gold);
+}
+
+.form-group textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.upload-box {
+  border: 1px dashed #5a4a26;
+  padding: 18px;
+  background: #0a0a0a;
+}
+
+.image-preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  background: #050505;
+  margin-top: 12px;
+  display: none;
+}
+
+.upload-status {
+  color: var(--gold);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 25px;
+
+  border-top: 1px solid #292929;
+  padding-top: 20px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+/* Tablet */
+@media (max-width: 1000px) {
+
+  .content,
+  .admin-main {
+    padding: 32px 28px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Smaller tablet / large phone */
+@media (max-width: 800px) {
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .promotion-card {
+    grid-template-columns: 1fr;
+  }
+
+  .promotion-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .promotion-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Mobile */
+@media (max-width: 620px) {
+
+  .app-shell,
+  .admin-layout {
+    display: block;
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: none;
+
+    min-height: auto;
+    padding: 20px 16px 16px;
+
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-brand {
+    padding: 0 8px 20px;
+  }
+
+  .sidebar nav {
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+
+  .sidebar nav a {
+    height: 44px;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    margin-top: 14px;
+  }
+
+  .content,
+  .admin-main {
+    width: 100%;
+    padding: 24px 16px 32px;
+  }
+
+  .topbar,
+  .page-header {
+    display: flex;
+    width: 100%;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-email {
+    margin-top: 4px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .panel-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .panel,
+  .stat-card {
+    padding: 20px;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .promotion-card {
+    grid-template-columns: 1fr;
+  }
+
+  .promotion-image {
+    width: 100%;
+    height: 190px;
+  }
+
+  .promotion-content {
+    padding: 18px;
+  }
+
+  .promotion-actions {
+    padding: 0 18px 18px;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .promotion-actions button {
+    flex: 1 1 120px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    padding: 22px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+
+  .login-page {
+    padding: 24px 16px;
+  }
+
+  .login-card {
+    max-width: 430px;
+    padding: 32px 24px;
+  }
+}
+
+
+/* Very small phones */
+@media (max-width: 380px) {
+
+  .sidebar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .sidebar nav a {
+    font-size: 13px;
+    padding: 0 8px;
+  }
+
+  .content,
+  .admin-main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .login-card {
+    padding: 26px 18px;
+  }
+}
+/* =========================================================
+   ASPIN.SITE ADMIN BRAND
+========================================================= */
+
+.sidebar-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+
+  width: 100% !important;
+  min-height: 54px !important;
+
+  padding: 0 10px 28px !important;
+}
+
+.sidebar-logo {
+  width: 42px !important;
+  height: 42px !important;
+
+  flex: 0 0 42px !important;
+
+  display: block !important;
+
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+.sidebar-brand-text {
+  min-width: 0;
+}
+
+.sidebar-brand-text strong {
+  display: block !important;
+
+  margin: 0 !important;
+
+  color: var(--cream) !important;
+
+  font-family: Inter, Arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+
+  letter-spacing: .14em !important;
+  white-space: nowrap !important;
+}
+
+.sidebar-brand-text span {
+  display: block !important;
+
+  margin-top: 4px !important;
+
+  color: var(--gold) !important;
+
+  font-family: Inter, Arial, sans-serif !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  font-weight: 600 !important;
+
+  letter-spacing: .22em !important;
+  white-space: nowrap !important;
+}
+
+
+/* Mobile */
+
+@media (max-width: 620px) {
+
+  .sidebar-brand {
+    padding-bottom: 20px !important;
+  }
+
+  .sidebar-logo {
+    width: 40px !important;
+    height: 40px !important;
+    flex-basis: 40px !important;
+  }
+
+  .sidebar-brand-text strong {
+    font-size: 12px !important;
+  }
+
+  .sidebar-brand-text span {
+    font-size: 8px !important;
+  }
+}
+/* =========================================================
+   LOGIN LOGO
+========================================================= */
+
+.login-card .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.login-logo {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: block;
+
+    object-fit: contain;
+    object-position: center;
+}
+
+.login-card .brand-name {
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: .2em;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.login-card .brand-sub {
+    margin-top: 4px;
+
+    font-size: 9px;
+    line-height: 1;
+    letter-spacing: .22em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 620px) {
+
+    .login-logo {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+    }
+
+    .login-card .brand-name {
+        font-size: 13px;
+    }
+
+    .login-card .brand-sub {
+        font-size: 8px;
+    }
+}
+
+/* ========================================
+   MOBILE BACK OFFICE MENU
+======================================== */
+
+.mobile-admin-header {
+    display: none;
+}
+
+
+.mobile-admin-menu-btn {
+    display: none;
+}
+
+
+.admin-menu-overlay {
+    display: none;
+}
+
+
+@media (max-width: 700px) {
+
+    /* ========================================
+       MOBILE HEADER
+    ======================================== */
+
+    .mobile-admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        width: 100%;
+        height: 64px;
+
+        padding: 0 16px;
+
+        box-sizing: border-box;
+
+        background: #080808;
+
+        border-bottom: 1px solid
+            rgba(200, 164, 90, 0.22);
+
+        position: sticky;
+        top: 0;
+
+        z-index: 2000;
+    }
+
+
+    .mobile-admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+
+    .mobile-admin-brand img {
+        width: 40px;
+        height: 40px;
+
+        object-fit: contain;
+    }
+
+
+    .mobile-admin-brand-text {
+        display: flex;
+        flex-direction: column;
+
+        line-height: 1;
+    }
+
+
+    .mobile-admin-brand-text strong {
+        color: #f3eee4;
+
+        font-size: 14px;
+
+        letter-spacing: .08em;
+    }
+
+
+    .mobile-admin-brand-text span {
+        margin-top: 4px;
+
+        color: #c8a45a;
+
+        font-size: 9px;
+
+        font-weight: 700;
+
+        letter-spacing: .15em;
+    }
+
+
+    /* ========================================
+       HAMBURGER
+    ======================================== */
+
+    .mobile-admin-menu-btn {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 46px;
+        height: 46px;
+
+        padding: 0;
+
+        background: #111;
+
+        border: 1px solid
+            rgba(200, 164, 90, .45);
+
+        color: #f3eee4;
+
+        cursor: pointer;
+
+        position: relative;
+
+        z-index: 2100;
+    }
+
+
+    .mobile-admin-menu-btn:hover {
+        border-color: #c8a45a;
+        color: #c8a45a;
+    }
+
+
+    .hamburger-lines {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .hamburger-lines span {
+        display: block;
+
+        width: 20px;
+        height: 2px;
+
+        background: currentColor;
+    }
+
+
+    /* ========================================
+       SIDEBAR
+    ======================================== */
+
+    .sidebar {
+        position: fixed !important;
+
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+
+        width: 250px !important;
+        min-width: 250px !important;
+        max-width: 250px !important;
+
+        height: 100vh !important;
+
+        box-sizing: border-box;
+
+        transform: translateX(-100%);
+
+        transition:
+            transform .25s ease;
+
+        z-index: 1900;
+
+        overflow-y: auto;
+    }
+
+
+    .sidebar.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+
+    /* ========================================
+       OVERLAY
+    ======================================== */
+
+    .admin-menu-overlay {
+        display: block;
+
+        position: fixed;
+
+        inset: 0;
+
+        background:
+            rgba(0, 0, 0, .68);
+
+        opacity: 0;
+
+        visibility: hidden;
+
+        pointer-events: none;
+
+        transition:
+            opacity .25s ease,
+            visibility .25s ease;
+
+        z-index: 1800;
+    }
+
+
+    .admin-menu-overlay.active {
+        opacity: 1;
+
+        visibility: visible;
+
+        pointer-events: auto;
+    }
+
+
+    /* ========================================
+       MAIN CONTENT
+    ======================================== */
+
+    .admin-main,
+    .content {
+        width: 100% !important;
+
+        margin-left: 0 !important;
+
+        box-sizing: border-box;
+    }
+
+
+    .admin-layout,
+    .app-shell {
+        display: block !important;
+
+        width: 100%;
+
+        min-height: 100vh;
+    }
+
+
+    /* ========================================
+       NO SCROLL BEHIND MENU
+    ======================================== */
+
+    body.admin-menu-open {
+        overflow: hidden;
+    }
+
+}
+
+/* ========================================
+   UNIVERSAL SIDEBAR + LOGOUT FIX
+   Applies to EVERY Back Office page
+======================================== */
+
+.app-shell .sidebar,
+.admin-layout .sidebar {
+    box-sizing: border-box !important;
+
+    height: 100vh !important;
+    min-height: 100vh !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    overflow-y: auto;
+}
+
+
+/* ========================================
+   KEEP LOGOUT AT BOTTOM
+======================================== */
+
+.app-shell .sidebar .logout-btn,
+.admin-layout .sidebar .logout-btn {
+    margin-top: auto !important;
+
+    flex-shrink: 0 !important;
+
+    width: 100% !important;
+}
+
+
+/* ========================================
+   DESKTOP
+======================================== */
+
+@media (min-width: 701px) {
+
+    .app-shell .sidebar,
+    .admin-layout .sidebar {
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+
+    .app-shell .sidebar,
+    .admin-layout .sidebar {
+
+        position: fixed !important;
+
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+
+        height: 100vh !important;
+        min-height: 100vh !important;
+
+        box-sizing: border-box !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        overflow-y: auto !important;
+    }
+
+
+    .app-shell .sidebar .logout-btn,
+    .admin-layout .sidebar .logout-btn {
+
+        margin-top: auto !important;
+
+        margin-bottom: 24px !important;
+
+        flex-shrink: 0 !important;
+    }
+
+}
+/* ========================================
+   PASSWORD SHOW / HIDE
+======================================== */
+
+.password-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+.password-wrapper input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-right: 52px !important;
+}
+
+.password-toggle {
+    position: absolute !important;
+
+    top: 50% !important;
+    right: 0 !important;
+
+    transform: translateY(-50%) !important;
+
+    width: 48px !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: transparent !important;
+    border: none !important;
+
+    color: #99958d !important;
+
+    cursor: pointer !important;
+
+    z-index: 10 !important;
+}
+
+.password-toggle:hover {
+    color: #c8a45a !important;
+}
+
+.password-toggle:focus {
+    outline: none !important;
+}
+
+.eye-icon {
+    display: block;
+
+    font-size: 15px;
+
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+/* ========================================
+   STICKY BACK OFFICE SIDEBAR
+======================================== */
+
+@media (min-width: 701px) {
+
+    .sidebar {
+        position: sticky !important;
+        top: 0 !important;
+
+        height: 100vh !important;
+        min-height: 100vh !important;
+
+        box-sizing: border-box !important;
+
+        overflow-y: auto !important;
+    }
+
+}
+
+
+/* ========================================
+   MOBILE
+   Keep existing burger behavior
+======================================== */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+
+}
+
+.faq-publish-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+
+    margin-top: 25px;
+    padding-top: 20px;
+
+    border-top: 1px solid #292929;
+}
+
+.faq-publish-actions button {
+    min-height: 48px;
+    padding: 12px 18px;
+
+    cursor: pointer;
+
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.faq-publish-actions .publish-btn {
+    background: #b90000;
+    color: #fff;
+    border: 1px solid #d4af37;
+}
+
+.faq-publish-actions .publish-btn:hover {
+    background: #d00000;
+}
+
+.faq-publish-actions .draft-btn {
+    background: transparent;
+    color: #d4af37;
+    border: 1px solid #d4af37;
+}
+
+.faq-publish-actions .draft-btn:hover {
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.faq-publish-actions .cancel-btn {
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #555;
+}
+
+.faq-publish-actions .cancel-btn:hover {
+    color: #fff;
+    border-color: #888;
+}
+
+.faq-publish-actions button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}

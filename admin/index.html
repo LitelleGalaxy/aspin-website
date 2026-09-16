@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ASPIN BO | Dashboard</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <img
+                src="favicon.png"
+                alt="ASPIN"
+                class="sidebar-logo"
+            >
+
+            <div class="sidebar-brand-text">
+                <strong>ASPIN.SITE</strong>
+                <span>BACK OFFICE</span>
+            </div>
+
+        </div>
+
+        <nav class="admin-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="promotions.html">Promotions</a>
+        <a href="media.html">Media</a>
+        <a href="faqs.html">FAQs</a>
+        <a href="payments.html">Payments</a>
+        <a href="subscribers.html">Subscribers</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="activity.html">Activity History</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+
+      <button id="logoutBtn" class="logout-btn">
+        LOG OUT
+      </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <header class="page-header">
+
+            <div>
+                <div class="eyebrow">ASPIN.SITE</div>
+
+                <h1>Dashboard</h1>
+
+                <p>
+                    Manage and monitor your ASPIN.SITE website.
+                </p>
+            </div>
+
+            <div
+                id="adminEmail"
+                class="admin-email"
+            ></div>
+
+        </header>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <span>Published Promotions</span>
+                <strong id="promotionCount">—</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Subscribers</span>
+                <strong id="subscriberCount">—</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Register Clicks</span>
+                <strong id="registerClicks">—</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Tracked Events</span>
+                <strong id="eventCount">—</strong>
+            </article>
+
+        </section>
+
+
+        <!-- DASHBOARD PANELS -->
+        <section class="panel-grid">
+
+            <!-- QUICK ACTIONS -->
+            <article class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <div class="eyebrow">CONTENT</div>
+                        <h2>Quick Actions</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+                    <a href="promotions.html">
+                        Add Promotion
+                    </a>
+
+                    <a href="media.html">
+                        Upload Media
+                    </a>
+
+                    <a href="faqs.html">
+                        Edit FAQs
+                    </a>
+
+                    <a href="payments.html">
+                        Manage Payments
+                    </a>
+
+                </div>
+
+            </article>
+
+
+            <!-- SYSTEM STATUS -->
+            <article class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <div class="eyebrow">SYSTEM</div>
+                        <h2>Back Office Status</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="status-row">
+                    <span>Authentication</span>
+                    <b class="status-ok">SECURE</b>
+                </div>
+
+                <div class="status-row">
+                    <span>Database</span>
+                    <b id="dbStatus">CHECKING</b>
+                </div>
+
+                <div class="status-row">
+                    <span>Admin Access</span>
+                    <b class="status-ok">AUTHORIZED</b>
+                </div>
+
+            </article>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+  <!-- SUPABASE -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="admin.js"></script>
+  <script src="mobile-menu.js"></script>
+
+</body>
+</html>

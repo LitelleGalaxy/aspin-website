@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ASPIN Admin Login</title>
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="favicon.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body class="login-page">
+
+
+    <main class="login-card">
+
+
+        <!-- ========================================
+             BRAND
+        ======================================== -->
+
+        <div class="brand">
+
+            <img
+                src="favicon.png"
+                alt="ASPIN"
+                class="login-logo"
+            >
+
+            <div>
+
+                <div class="brand-name">
+                    ASPIN.SITE
+                </div>
+
+                <div class="brand-sub">
+                    BACK OFFICE
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================
+             TITLE
+        ======================================== -->
+
+        <h1>
+            Welcome back
+        </h1>
+
+        <p class="muted">
+            Sign in to manage ASPIN.SITE.
+        </p>
+
+
+        <!-- ========================================
+             LOGIN FORM
+        ======================================== -->
+
+        <form id="loginForm">
+
+            <label for="email">
+                EMAIL
+            </label>
+
+            <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                autocomplete="username"
+                required
+            >
+
+
+            <label for="password">
+                PASSWORD
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                >
+
+                <button
+                    type="button"
+                    id="togglePassword"
+                    class="password-toggle"
+                    aria-label="Show password"
+                    title="Show password"
+                >
+                    <span class="eye-icon">◉</span>
+                </button>
+
+            </div>
+
+            <button
+                id="loginBtn"
+                class="primary-btn"
+                type="submit"
+            >
+                SIGN IN
+            </button>
+
+
+            <p
+                id="loginError"
+                class="error"
+            ></p>
+
+        </form>
+
+
+        <!-- ========================================
+             BACK TO WEBSITE
+        ======================================== -->
+
+        <a
+            class="back-link"
+            href="../index.html"
+        >
+            ← Back to website
+        </a>
+
+
+    </main>
+
+
+    <!-- ========================================
+         SUPABASE
+    ======================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="supabase.js"></script>
+
+    <script src="login.js"></script>
+
+
+</body>
+
+</html>
