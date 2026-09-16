@@ -1,730 +1,492 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ASPIN | Official Information & Promotions</title>
-    <meta name="description" content="Official ASPIN information, promotions, payment options and updates.">
+    <title>ASPIN.SITE | Official ASPIN</title>
+    <meta
+        name="description"
+        content="Welcome to ASPIN.SITE. Explore current promotions, stay updated on new offers, and access the official ASPIN platform."
+    >
 
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
-    </script>
-
-    <!-- Meta Pixel -->
-    <script>
-        !function(f,b,e,v,n,t,s) {
-            if(f.fbq)return;
-
-            n=f.fbq=function() {
-                n.callMethod ?
-                n.callMethod.apply(n,arguments) :
-                n.queue.push(arguments)
-            };
-
-            if(!f._fbq)f._fbq=n;
-
-            n.push=n;
-            n.loaded=!0;
-            n.version='2.0';
-            n.queue=[];
-
-            t=b.createElement(e);
-            t.async=!0;
-            t.src=v;
-
-            s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)
-        }(
-            window,
-            document,
-            'script',
-            'https://connect.facebook.net/en_US/fbevents.js'
-        );
-
-        fbq('init', 'YOUR_META_PIXEL_ID');
-        fbq('track', 'PageView');
-    </script>
-
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
 </head>
 
 <body>
 
-<!-- =========================
-     NAVBAR
-========================= -->
+    <!-- ================= HEADER ================= -->
+    <header class="site-header" id="siteHeader">
+        <div class="nav-container">
 
-<header class="navbar">
+            <a href="#home" class="brand">
+                <img src="logo1.png" alt="ASPIN" class="nav-logo">
+            </a>
 
-    <a href="#" class="navbar-logo">
-        <img src="logo1.png" alt="ASPIN">
-    </a>
+            <nav class="desktop-nav">
+                <a href="#promotions">Promotions</a>
+                <a href="#why-aspin">Why ASPIN</a>
+                <a href="#payments">Payments</a>
+                <a href="#faq">FAQ</a>
 
-    <nav>
+                <a
+                    href="https://aspin.vip/"
+                    class="nav-register"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-event="register_click"
+                >
+                    REGISTER NOW
+                </a>
+            </nav>
 
-        <a href="#about" data-track="about_click">
-            ABOUT
-        </a>
+            <button
+                class="mobile-menu-btn"
+                id="mobileMenuBtn"
+                aria-label="Open navigation"
+                aria-expanded="false"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
-        <a href="#why" data-track="why_aspin_click">
-            WHY ASPIN
-        </a>
+        </div>
 
-        <a href="#promotions" data-track="promotions_click">
-            PROMOTIONS
-        </a>
-
-        <a href="#payments" data-track="payments_click">
-            PAYMENTS
-        </a>
-
-        <a href="#faq" data-track="faq_click">
-            FAQ
-        </a>
-
-    </nav>
-
-    <a
-        href="https://aspin.vip/"
-        class="register-btn"
-        data-track="navbar_register"
-    >
-        REGISTER NOW
-    </a>
-
-</header>
-
-
-<!-- HERO SECTION -->
-
-<section class="hero">
-
-    <div class="hero-content">
-
-        <p class="eyebrow">
-            WELCOME TO ASPIN
-        </p>
-
-        <h1>
-            THE <span>ULTIMATE</span><br>
-            EXPERIENCE
-        </h1>
-
-        <p class="hero-text">
-            Discover ASPIN, explore current promotions,
-            learn about available payment options,
-            and stay updated with the latest announcements.
-        </p>
-
-        <div class="hero-buttons">
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="#promotions">Promotions</a>
+            <a href="#why-aspin">Why ASPIN</a>
+            <a href="#payments">Payments</a>
+            <a href="#faq">FAQ</a>
 
             <a
                 href="https://aspin.vip/"
-                class="gold-btn"
-                data-track="hero_register"
+                class="mobile-register"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-event="register_click"
             >
                 REGISTER NOW
             </a>
+        </div>
+    </header>
 
-            <a
-                href="#promotions"
-                class="outline-btn"
-                data-track="hero_promotions"
+
+    <main>
+
+        <!-- ================= HERO ================= -->
+        <section class="hero" id="home">
+
+            <div class="hero-bg"></div>
+
+            <div class="hero-content">
+
+                <div class="hero-eyebrow">
+                    WELCOME TO ASPIN
+                </div>
+
+                <h1>
+                    YOUR NEXT<br>
+                    <span>PLAY STARTS HERE</span>
+                </h1>
+
+                <p class="hero-description">
+                    Explore current ASPIN promotions, stay updated on new
+                    offers, and access the official ASPIN platform.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="#promotions"
+                        class="btn btn-secondary"
+                        data-event="view_promotions_click"
+                    >
+                        VIEW PROMOTIONS
+                    </a>
+
+                    <a
+                        href="https://aspin.vip/"
+                        class="btn btn-primary"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-event="register_click"
+                    >
+                        REGISTER NOW
+                    </a>
+
+                </div>
+
+                <div class="responsible-note">
+                    <strong>21+</strong>
+                    &nbsp; | &nbsp;
+                    Gambling Can Be Addictive, Know When to Stop.
+                </div>
+
+            </div>
+
+            <div class="hero-accent"></div>
+
+        </section>
+
+
+        <!-- ================= FEATURED PROMOTIONS ================= -->
+        <!-- Moved immediately after HERO so it appears much higher -->
+        <section class="section promotions-section" id="promotions">
+
+            <div class="section-heading">
+                <div class="section-eyebrow">LATEST OFFERS</div>
+
+                <h2>
+                    FEATURED <span>PROMOTIONS</span>
+                </h2>
+
+                <p>
+                    Discover the latest offers and promotions available
+                    through ASPIN.
+                </p>
+            </div>
+
+            <div
+                class="promotions-grid"
+                id="promotionsGrid"
             >
-                VIEW PROMOTIONS
-            </a>
+                <div class="loading-state">
+                    Loading promotions...
+                </div>
+            </div>
 
-            <a
-                href="#subscribe"
-                class="outline-btn"
-                data-track="stay_updated"
+        </section>
+
+
+        <!-- ================= WHY ASPIN ================= -->
+        <section class="section why-section" id="why-aspin">
+
+            <div class="section-heading">
+                <div class="section-eyebrow">THE ASPIN EXPERIENCE</div>
+
+                <h2>
+                    WHY <span>ASPIN</span>
+                </h2>
+
+                <p>
+                    A centralized destination for ASPIN updates,
+                    promotions, and access to the official platform.
+                </p>
+            </div>
+
+            <div class="why-grid">
+
+                <article class="why-card">
+                    <div class="why-number">01</div>
+
+                    <h3>OFFICIAL ACCESS</h3>
+
+                    <p>
+                        Access the official ASPIN gaming platform directly
+                        from this website.
+                    </p>
+                </article>
+
+
+                <article class="why-card">
+                    <div class="why-number">02</div>
+
+                    <h3>UPDATED PROMOTIONS</h3>
+
+                    <p>
+                        Stay informed about current promotions and
+                        available offers.
+                    </p>
+                </article>
+
+
+                <article class="why-card">
+                    <div class="why-number">03</div>
+
+                    <h3>CONVENIENT PAYMENTS</h3>
+
+                    <p>
+                        View available payment methods and related
+                        information in one place.
+                    </p>
+                </article>
+
+
+                <article class="why-card">
+                    <div class="why-number">04</div>
+
+                    <h3>STAY INFORMED</h3>
+
+                    <p>
+                        Subscribe to receive updates about new promotions
+                        and announcements.
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PAYMENTS ================= -->
+        <section class="section payments-section" id="payments">
+
+            <div class="section-heading">
+                <div class="section-eyebrow">AVAILABLE OPTIONS</div>
+
+                <h2>
+                    PAYMENT <span>METHODS</span>
+                </h2>
+
+                <p>
+                    View the payment methods currently available through
+                    ASPIN.
+                </p>
+            </div>
+
+            <div
+                class="payments-grid"
+                id="paymentsGrid"
             >
-                STAY UPDATED
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     ABOUT
-========================= -->
-
-<section class="section about" id="about">
-
-    <div class="section-heading">
-
-        <p class="eyebrow">
-            ABOUT ASPIN
-        </p>
-
-        <h2>
-            DISCOVER <span>ASPIN</span>
-        </h2>
-
-        <div class="gold-line"></div>
-
-    </div>
-
-    <div class="about-content">
-
-        <div>
-
-            <p>
-                ASPIN provides an online gaming platform focused
-                on accessibility, convenience, entertainment and
-                user experience.
-            </p>
-
-            <p>
-                This website provides information about the ASPIN
-                platform, promotions, payment options and updates.
-            </p>
-
-        </div>
-
-        <div class="about-card">
-
-            <span>01</span>
-
-            <h3>
-                OFFICIAL PLATFORM
-            </h3>
-
-            <p>
-                Visit the official ASPIN platform to access
-                your account and available services.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     WHY ASPIN
-========================= -->
-
-<section class="section why" id="why">
-
-    <div class="section-heading">
-
-        <p class="eyebrow">
-            THE ASPIN DIFFERENCE
-        </p>
-
-        <h2>
-            WHY CHOOSE <span>ASPIN?</span>
-        </h2>
-
-        <div class="gold-line"></div>
-
-    </div>
-
-    <div class="feature-grid">
-
-        <div class="feature-card">
-
-            <div class="feature-number">
-                01
+                <div class="loading-state">
+                    Loading payment methods...
+                </div>
             </div>
 
-            <h3>
-                CONVENIENT ACCESS
-            </h3>
-
-            <p>
-                Access the platform across supported devices
-                with a straightforward user experience.
-            </p>
-
-        </div>
+        </section>
 
 
-        <div class="feature-card">
+        <!-- ================= FAQ ================= -->
+        <section class="section faq-section" id="faq">
 
-            <div class="feature-number">
-                02
+            <div class="section-heading">
+                <div class="section-eyebrow">NEED TO KNOW</div>
+
+                <h2>
+                    FREQUENTLY ASKED <span>QUESTIONS</span>
+                </h2>
+
+                <p>
+                    Find answers to common questions about ASPIN.
+                </p>
             </div>
 
-            <h3>
-                PROMOTIONAL UPDATES
-            </h3>
-
-            <p>
-                Stay informed about current campaigns,
-                offers and announcements.
-            </p>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-number">
-                03
-            </div>
-
-            <h3>
-                EASY PAYMENTS
-            </h3>
-
-            <p>
-                Explore available deposit and withdrawal
-                methods supported by the platform.
-            </p>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-number">
-                04
-            </div>
-
-            <h3>
-                SUPPORT
-            </h3>
-
-            <p>
-                Find information and assistance when you
-                need help with your platform experience.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     PROMOTIONS
-========================= -->
-
-<section class="section promotions" id="promotions">
-
-    <div class="section-heading">
-
-        <p class="eyebrow">
-            LATEST OFFERS
-        </p>
-
-        <h2>
-            ASPIN <span>PROMOTIONS</span>
-        </h2>
-
-        <div class="gold-line"></div>
-
-    </div>
-
-    <div class="promo-grid" id="promoGrid">
-    
-    
-    </div>
-
-</section>
-
-
-<!-- =========================
-     PAYMENTS
-========================= -->
-
-<section class="section payments" id="payments">
-
-    <div class="section-heading">
-
-        <p class="eyebrow">
-            CONVENIENCE
-        </p>
-
-        <h2>
-            CASH IN <span>&amp; CASH OUT</span>
-        </h2>
-
-        <div class="gold-line"></div>
-
-    </div>
-
-    <div class="payment-grid">
-
-        <div class="payment-card">
-
-            <div class="payment-icon">
-                ↓
-            </div>
-
-            <h3>
-                CASH IN
-            </h3>
-
-            <p>
-                Choose from the payment methods available
-                through your ASPIN account.
-            </p>
-
-        </div>
-
-
-        <div class="payment-card">
-
-            <div class="payment-icon">
-                ↑
-            </div>
-
-            <h3>
-                CASH OUT
-            </h3>
-
-            <p>
-                Submit withdrawal requests through the
-                available options on the platform.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     SUBSCRIBE
-========================= -->
-
-<section
-    class="subscribe"
-    id="subscribe"
->
-
-    <div class="subscribe-content">
-
-        <p class="eyebrow">
-            STAY CONNECTED
-        </p>
-
-        <h2>
-            NEVER MISS AN<br>
-            <span>ASPIN UPDATE</span>
-        </h2>
-
-        <p>
-            Receive information about promotions,
-            campaigns and platform announcements.
-        </p>
-
-        <form id="subscribeForm">
-
-            <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Full Name"
-                autocomplete="name"
-                required
+            <div
+                class="faq-list"
+                id="faqList"
             >
+                <div class="loading-state">
+                    Loading FAQs...
+                </div>
+            </div>
 
-            <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Email Address"
-                autocomplete="email"
-                required
-            >
+        </section>
 
-            <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="Mobile Number"
-                autocomplete="tel"
-                required
-            >
 
-            <label class="consent">
+        <!-- ================= SUBSCRIBE ================= -->
+        <section class="subscribe-section" id="subscribe">
 
-                <input
-                    type="checkbox"
-                    id="consent"
-                    required
+            <div class="subscribe-container">
+
+                <div class="subscribe-copy">
+                    <div class="section-eyebrow">
+                        STAY UPDATED
+                    </div>
+
+                    <h2>
+                        NEVER MISS AN<br>
+                        <span>ASPIN UPDATE</span>
+                    </h2>
+
+                    <p>
+                        Subscribe to receive updates about promotions,
+                        new offers, and announcements.
+                    </p>
+                </div>
+
+
+                <form
+                    class="subscribe-form"
+                    id="subscribeForm"
                 >
 
-                <span>
-                    I agree to receive promotional communications
-                    from ASPIN by email and/or SMS.
-                </span>
+                    <div class="form-row">
 
-            </label>
+                        <input
+                            type="email"
+                            id="subscriberEmail"
+                            name="email"
+                            placeholder="EMAIL ADDRESS"
+                            required
+                        >
 
-            <button
-                type="submit"
-                class="gold-btn"
-                data-track="newsletter_submit"
-            >
-                SUBSCRIBE
-            </button>
+                        <input
+                            type="tel"
+                            id="subscriberPhone"
+                            name="phone"
+                            placeholder="PHONE NUMBER"
+                            required
+                        >
 
-            <p class="form-note">
-                You may unsubscribe from promotional communications
-                at any time.
-            </p>
-
-        </form>
-
-        <div
-            id="successMessage"
-            class="success-message"
-        >
-            Thank you for subscribing to ASPIN updates.
-        </div>
-
-    </div>
-
-</section>
+                    </div>
 
 
-<!-- =========================
-     FAQ
-========================= -->
+                    <label class="consent-row">
 
-<section
-    class="section faq"
-    id="faq"
->
+                        <input
+                            type="checkbox"
+                            id="subscriberConsent"
+                            required
+                        >
 
-    <div class="section-heading">
+                        <span>
+                            I agree to receive ASPIN promotions,
+                            announcements, and updates. I understand that
+                            I may unsubscribe at any time.
+                        </span>
 
-        <p class="eyebrow">
-            NEED TO KNOW
-        </p>
-
-        <h2>
-            FREQUENTLY ASKED <span>QUESTIONS</span>
-        </h2>
-
-        <div class="gold-line"></div>
-
-    </div>
-
-    <div class="faq-container">
-
-        <details data-track="faq_platform">
-
-            <summary>
-                What is ASPIN?
-            </summary>
-
-            <p>
-                ASPIN is an online gaming platform accessible
-                through the official ASPIN website.
-            </p>
-
-        </details>
+                    </label>
 
 
-        <details data-track="faq_register">
+                    <button
+                        type="submit"
+                        class="btn btn-primary subscribe-btn"
+                    >
+                        SUBSCRIBE
+                    </button>
 
-            <summary>
-                Where can I register?
-            </summary>
+                    <div
+                        class="form-message"
+                        id="subscribeMessage"
+                    ></div>
 
-            <p>
-                Registration is available through the official
-                ASPIN platform.
-            </p>
+                </form>
 
-        </details>
+            </div>
 
-
-        <details data-track="faq_promotions">
-
-            <summary>
-                How can I receive promotions?
-            </summary>
-
-            <p>
-                Subscribe to ASPIN updates and opt in to receive
-                promotional communications.
-            </p>
-
-        </details>
+        </section>
 
 
-        <details data-track="faq_payments">
+        <!-- ================= FINAL CTA ================= -->
+        <section class="final-cta">
 
-            <summary>
-                How do payments work?
-            </summary>
+            <div class="final-cta-inner">
 
-            <p>
-                Available deposit and withdrawal methods can be
-                found within your ASPIN account.
-            </p>
+                <div class="section-eyebrow">
+                    READY TO GET STARTED?
+                </div>
 
-        </details>
+                <h2>
+                    YOUR NEXT PLAY<br>
+                    <span>STARTS HERE</span>
+                </h2>
 
-    </div>
+                <p>
+                    Visit the official ASPIN platform.
+                </p>
 
-</section>
+                <a
+                    href="https://aspin.vip/"
+                    class="btn btn-primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-event="register_click"
+                >
+                    REGISTER NOW
+                </a>
 
+                <div class="responsible-note">
+                    <strong>21+</strong>
+                    &nbsp; | &nbsp;
+                    Gambling Can Be Addictive, Know When to Stop.
+                </div>
 
-<!-- =========================
-     FINAL CTA
-========================= -->
+            </div>
 
-<section class="final-cta">
+        </section>
 
-    <p class="eyebrow">
-        READY TO GET STARTED?
-    </p>
-
-    <h2>
-        ENTER THE <span>ULTIMATE</span> EXPERIENCE
-    </h2>
-
-    <a
-        href="https://aspin.vip/"
-        class="gold-btn"
-        data-track="final_register"
-    >
-        REGISTER NOW
-    </a>
-
-</section>
+    </main>
 
 
-<!-- =========================
-     FOOTER
-========================= -->
+    <!-- ================= FOOTER ================= -->
+    <footer class="site-footer">
 
-<footer>
+        <div class="footer-container">
 
-    <div class="footer-main">
-
-
-        <div class="footer-brand">
-
-            <a href="#" class="footer-logo">
+            <div class="footer-brand">
 
                 <img
                     src="logo.png"
-                    alt="ASPIN Logo"
+                    alt="ASPIN"
+                    class="footer-logo"
                 >
 
-            </a>
+                <p>
+                    Official ASPIN informational website.
+                </p>
 
-            <p>
-                Official information and promotions for ASPIN.
-            </p>
-
-        </div>
+            </div>
 
 
-        <div class="footer-links">
+            <div class="footer-links">
 
-            <h4>
-                EXPLORE
-            </h4>
+                <div>
+                    <h4>NAVIGATION</h4>
 
-            <a href="#about">
-                About
-            </a>
-
-            <a href="#promotions">
-                Promotions
-            </a>
-
-            <a href="#payments">
-                Payments
-            </a>
-
-            <a href="#faq">
-                FAQ
-            </a>
-
-        </div>
+                    <a href="#home">Home</a>
+                    <a href="#promotions">Promotions</a>
+                    <a href="#why-aspin">Why ASPIN</a>
+                    <a href="#payments">Payments</a>
+                    <a href="#faq">FAQ</a>
+                </div>
 
 
-        <div class="footer-links">
+                <div>
+                    <h4>ACCOUNT</h4>
 
-            <h4>
-                IMPORTANT
-            </h4>
+                    <a
+                        href="https://aspin.vip/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-event="register_click"
+                    >
+                        Register Now
+                    </a>
 
-            <a href="#">
-                Privacy Policy
-            </a>
+                    <a href="#subscribe">
+                        Stay Updated
+                    </a>
+                </div>
 
-            <a href="#">
-                Terms &amp; Conditions
-            </a>
-
-            <a href="#">
-                Responsible Gaming
-            </a>
-
-            <a href="#">
-                Contact
-            </a>
+            </div>
 
         </div>
 
 
-        <div class="footer-links">
+        <div class="footer-bottom">
 
-            <h4>
-                OFFICIAL PLATFORM
-            </h4>
+            <div>
+                © <span id="currentYear"></span> ASPIN. All rights reserved.
+            </div>
 
-            <a
-                href="https://aspin.vip/"
-                data-track="footer_register"
-            >
-                aspin.vip →
-            </a>
+            <div class="footer-responsible">
+                21+ &nbsp;|&nbsp;
+                Gambling Can Be Addictive, Know When to Stop.
+            </div>
 
         </div>
 
-    </div>
+    </footer>
 
 
-    <div class="footer-bottom">
-
-        <p>
-            © 2026 ASPIN. All rights reserved.
-        </p>
-
-        <p>
-            Gambling Can Be Addictive, Know When to Stop.
-        </p>
-
-    </div>
-
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="Backoffice/supabase.js"></script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
