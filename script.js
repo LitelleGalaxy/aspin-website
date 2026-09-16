@@ -1,223 +1,578 @@
-/* =========================================================
-   ASPIN.SITE FRONTEND JAVASCRIPT
-   ========================================================= */
-
-const GAMING_SITE_URL = "https://aspin.vip/";
+/* script.js */
 
 
-/* =========================================================
-   BASIC HELPERS
-   ========================================================= */
+/* ================================
+   UTM TRACKING
+================================ */
 
-function escapeHTML(value) {
-    if (value === null || value === undefined) {
-        return "";
-    }
+const params = new URLSearchParams(
+    window.location.search
+);
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+const currentUTM = {
+
+    utm_source:
+        params.get("utm_source"),
+
+    utm_medium:
+        params.get("utm_medium"),
+
+    utm_campaign:
+        params.get("utm_campaign"),
+
+    utm_content:
+        params.get("utm_content"),
+
+    utm_term:
+        params.get("utm_term")
+
+};
+
+
+/* Save UTM information */
+
+if (currentUTM.utm_source) {
+
+    localStorage.setItem(
+        "aspin_utm",
+        JSON.stringify(currentUTM)
+    );
+
 }
 
 
-function safeURL(value, fallback = "#") {
-    if (!value) {
-        return fallback;
+/* Retrieve saved UTM information */
+
+const savedUTM = JSON.parse(
+    localStorage.getItem("aspin_utm") || "{}"
+);
+
+
+/* ================================
+   TRAFFIC SOURCE
+================================ */
+
+function getTrafficSource() {
+
+    const source =
+        savedUTM.utm_source;
+
+
+    if (source) {
+        return source;
     }
 
-    try {
-        const url = new URL(value, window.location.origin);
 
-        if (
-            url.protocol === "http:" ||
-            url.protocol === "https:"
-        ) {
-            return url.href;
-        }
+    const referrer =
+        document.referrer;
 
-    } catch (error) {
-        return fallback;
+
+    if (!referrer) {
+        return "direct";
     }
 
-    return fallback;
+
+    if (
+        referrer.includes(
+            "facebook.com"
+        )
+    ) {
+        return "facebook";
+    }
+
+
+    if (
+        referrer.includes(
+            "google."
+        )
+    ) {
+        return "google";
+    }
+
+
+    if (
+        referrer.includes(
+            "tiktok.com"
+        )
+    ) {
+        return "tiktok";
+    }
+
+
+    if (
+        referrer.includes(
+            "instagram.com"
+        )
+    ) {
+        return "instagram";
+    }
+
+
+    if (
+        referrer.includes(
+            "youtube.com"
+        )
+    ) {
+        return "youtube";
+    }
+
+
+    return "referral";
 }
 
 
-/* =========================================================
-   SESSION + UTM TRACKING
-   ========================================================= */
-
-function getSessionId() {
-
-    let sessionId =
-        sessionStorage.getItem("aspin_session_id");
-
-    if (!sessionId) {
-
-        sessionId =
-            `${Date.now()}-${Math.random()
-                .toString(36)
-                .slice(2)}`;
-
-        sessionStorage.setItem(
-            "aspin_session_id",
-            sessionId
-        );
-    }
-
-    return sessionId;
-}
-
-
-function getUTMData() {
-
-    const params =
-        new URLSearchParams(window.location.search);
-
-    return {
-        source:
-            params.get("utm_source") || "direct",
-
-        medium:
-            params.get("utm_medium") || "none",
-
-        campaign:
-            params.get("utm_campaign") || null,
-
-        term:
-            params.get("utm_term") || null,
-
-        content:
-            params.get("utm_content") || null
-    };
-}
-
-
-/* =========================================================
+/* ================================
    ANALYTICS
-   ========================================================= */
+================================ */
 
-async function trackEvent(
-    eventName,
-    additionalData = {}
-) {
-
-    try {
-
-        if (
-            !eventName ||
-            eventName.length > 40
-        ) {
-            return;
-        }
-
-        const utm = getUTMData();
-
-        const eventData = {
-            event_name: eventName,
-            session_id: getSessionId(),
-            page_url: window.location.href,
-            source: utm.source,
-            utm_source: utm.source,
-            utm_medium: utm.medium,
-            utm_campaign: utm.campaign,
-            utm_term: utm.term,
-            utm_content: utm.content,
-            ...additionalData
-        };
-
-        await supabaseClient
-            .from("analytics_events")
-            .insert(eventData);
-
-    } catch (error) {
-
-        console.warn(
-            "Analytics error:",
-            error
-        );
-
-    }
-}
-
-
-/* =========================================================
-   META PIXEL
-   ========================================================= */
-
-function trackMetaEvent(
+function trackEvent(
     eventName,
     data = {}
 ) {
 
+    const eventData = {
+
+        ...data,
+
+        traffic_source:
+            getTrafficSource(),
+
+        ...savedUTM
+
+    };
+
+
+    /* Google Analytics */
+
     if (
-        typeof window.fbq === "function"
+        typeof gtag === "function"
     ) {
 
-        window.fbq(
-            "track",
+        gtag(
+            "event",
             eventName,
-            data
+            eventData
         );
 
     }
+
+
+    /* Meta Pixel */
+
+    if (
+        typeof fbq === "function"
+    ) {
+
+        fbq(
+            "trackCustom",
+            eventName,
+            eventData
+        );
+
+    }
+
+
+    /* Development console */
+
+    console.log(
+        "ASPIN EVENT:",
+        eventName,
+        eventData
+    );
+
 }
 
 
-/* =========================================================
-   TRACK CLICKABLE EVENTS
-   ========================================================= */
+/* ================================
+   PAGE VIEW
+================================ */
 
-document.addEventListener(
-    "click",
-    function (event) {
+trackEvent(
+    "aspin_page_view",
+    {
+        page:
+            window.location.pathname
+    }
+);
 
-        const target =
-            event.target.closest(
-                "[data-event]"
+
+/* ================================
+   ALL TRACKED BUTTONS
+================================ */
+
+document
+    .querySelectorAll(
+        "[data-track]"
+    )
+    .forEach(element => {
+
+        element.addEventListener(
+            "click",
+            function() {
+
+                trackEvent(
+                    this.dataset.track,
+                    {
+
+                        button_text:
+                            this.textContent.trim(),
+
+                        page:
+                            window.location.pathname
+
+                    }
+                );
+
+            }
+        );
+
+    });
+
+
+/* ================================
+   FAQ TRACKING
+================================ */
+
+document
+    .querySelectorAll(
+        "details[data-track]"
+    )
+    .forEach(item => {
+
+        item.addEventListener(
+            "toggle",
+            function() {
+
+                if (this.open) {
+
+                    trackEvent(
+                        this.dataset.track,
+                        {
+                            action: "open"
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* ================================
+   REGISTER TRACKING
+================================ */
+
+document
+    .querySelectorAll(
+        'a[href*="aspin.vip"]'
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                trackEvent(
+                    "register_click",
+                    {
+
+                        button:
+                            this.dataset.track ||
+                            this.textContent.trim(),
+
+                        destination:
+                            "aspin.vip"
+
+                    }
+                );
+
+            }
+        );
+
+    });
+
+
+/* ================================
+   STAY UPDATED BUTTON
+================================ */
+
+document
+    .querySelectorAll('a[href="#subscribe"]')
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                trackEvent(
+                    "stay_updated",
+                    {
+                        button_text:
+                            this.textContent.trim(),
+
+                        destination:
+                            "subscribe_section",
+
+                        page:
+                            window.location.pathname
+                    }
+                );
+
+            }
+        );
+
+    });
+
+
+/* ================================
+   NEWSLETTER
+================================ */
+
+const form =
+    document.getElementById(
+        "subscribeForm"
+    );
+
+const success =
+    document.getElementById(
+        "successMessage"
+    );
+
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+
+emailInput.addEventListener(
+    "input",
+    function () {
+
+        if (/\s/.test(this.value)) {
+
+            this.setCustomValidity(
+                "Email address must not contain spaces."
             );
 
-        if (!target) {
-            return;
-        }
-
-        const eventName =
-            target.dataset.event;
-
-        trackEvent(eventName);
-
-        if (
-            eventName ===
-            "register_click"
+        } else if (
+            this.value &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)
         ) {
 
-            trackMetaEvent(
-                "Lead"
+            this.setCustomValidity(
+                "Please enter a valid email address."
             );
+
+        } else {
+
+            this.setCustomValidity("");
 
         }
 
     }
 );
 
+const explorePromotionsBtn =
+    document.getElementById("explorePromotionsBtn");
 
-/* =========================================================
-   PROMOTIONS
-   ========================================================= */
+const exitSuccessBtn =
+    document.getElementById("exitSuccessBtn");
 
-async function loadPromotions() {
 
-    const container =
-        document.getElementById(
-            "promotionsGrid"
+if (form) {
+
+    form.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
+
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
+
+
+            const consent =
+                document
+                    .getElementById("consent")
+                    .checked;
+
+
+            if (
+                !email ||
+                !consent
+            ) {
+
+                alert(
+                    "Please enter your email address and agree to receive promotional communications."
+                );
+
+                return;
+
+            }
+
+
+            /* Google Analytics */
+
+            if (
+                typeof gtag === "function"
+            ) {
+
+                gtag(
+                    "event",
+                    "newsletter_subscribe",
+                    {
+
+                        method:
+                            "website",
+
+                        traffic_source:
+                            getTrafficSource(),
+
+                        ...savedUTM
+
+                    }
+                );
+
+            }
+
+
+            /* Meta Pixel */
+
+            if (
+                typeof fbq === "function"
+            ) {
+
+                fbq(
+                    "track",
+                    "Lead",
+                    {
+
+                        source:
+                            getTrafficSource()
+
+                    }
+                );
+
+            }
+
+
+            /* Success message */
+
+            form.reset();
+
+            successModal.classList.add("active");
+
+        }
+    );
+
+}
+
+/* ================================
+   SUBSCRIPTION SUCCESS MODAL
+================================ */
+
+if (successModal) {
+
+    exitSuccessBtn.addEventListener(
+        "click",
+        function () {
+            successModal.classList.remove("active");
+        }
+    );
+
+
+    explorePromotionsBtn.addEventListener(
+        "click",
+        function () {
+
+            successModal.classList.remove("active");
+
+            const promotions =
+                document.getElementById("promotions");
+
+            if (promotions) {
+                promotions.scrollIntoView({
+                    behavior: "smooth"
+                });
+            }
+
+        }
+    );
+
+
+    document
+        .querySelector(".success-modal-overlay")
+        .addEventListener(
+            "click",
+            function () {
+                successModal.classList.remove("active");
+            }
         );
 
-    if (!container) {
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                successModal.classList.contains("active")
+            ) {
+                successModal.classList.remove("active");
+            }
+
+        }
+    );
+
+}
+
+/* =========================================
+   DYNAMIC PROMOTIONS
+========================================= */
+
+async function loadPublicPromotions() {
+
+    const promoGrid =
+        document.getElementById("promoGrid");
+
+    if (
+        !promoGrid ||
+        typeof supabaseClient === "undefined"
+    ) {
+        console.error(
+            "Supabase client is not available."
+        );
+
         return;
     }
+
+
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
 
     const {
         data,
@@ -226,717 +581,640 @@ async function loadPromotions() {
         .from("promotions")
         .select("*")
         .eq("is_published", true)
+        .eq("is_active", true)
         .order("sort_order", {
             ascending: true
+        })
+        .order("created_at", {
+            ascending: false
         });
+
 
     if (error) {
 
         console.error(
-            "Promotions error:",
+            "Unable to load promotions:",
             error
         );
 
-        container.innerHTML = `
-            <div class="loading-state">
-                Promotions are currently unavailable.
+        promoGrid.innerHTML = `
+            <div class="promo-empty">
+                <p>Unable to load promotions.</p>
             </div>
         `;
 
         return;
     }
 
-    if (!data || data.length === 0) {
 
-        container.innerHTML = `
-            <div class="loading-state">
-                No promotions are currently available.
-            </div>
-        `;
+    /* DATE FILTER */
 
-        return;
-    }
-
-    container.innerHTML =
-        data.map(
+    const promotions =
+        (data || []).filter(
             promotion => {
 
-                const image =
-                    safeURL(
-                        promotion.image_url,
-                        ""
-                    );
+                if (
+                    promotion.start_date &&
+                    promotion.start_date > today
+                ) {
+                    return false;
+                }
 
-                const buttonURL =
-                    safeURL(
-                        promotion.button_url ||
-                        GAMING_SITE_URL,
-                        GAMING_SITE_URL
-                    );
 
-                return `
-                    <article class="promo-card">
+                if (
+                    promotion.end_date &&
+                    promotion.end_date < today
+                ) {
+                    return false;
+                }
 
-                        ${
-                            image
-                                ? `
-                                    <img
-                                        src="${escapeHTML(image)}"
-                                        alt="${escapeHTML(
-                                            promotion.title
-                                        )}"
-                                        class="promo-image"
-                                        loading="lazy"
-                                    >
-                                `
-                                : `
-                                    <div class="promo-image"></div>
-                                `
-                        }
 
-                        <div class="promo-content">
+                return true;
 
-                            ${
-                                promotion.label
-                                    ? `
-                                        <div class="promo-label">
-                                            ${escapeHTML(
-                                                promotion.label
-                                            )}
-                                        </div>
-                                    `
-                                    : ""
-                            }
+            }
+        );
 
-                            <h3>
-                                ${escapeHTML(
+
+    promoGrid.innerHTML = "";
+
+
+    if (!promotions.length) {
+
+        promoGrid.innerHTML = `
+            <div class="promo-empty">
+                <p>No promotions available at this time.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    promotions.forEach(
+        promotion => {
+
+            const card =
+                document.createElement("article");
+
+            card.className =
+                "promo-card";
+
+
+            /* IMAGE */
+
+            const image =
+                document.createElement("div");
+
+            image.className =
+                "promo-image";
+
+
+            if (promotion.image_url) {
+
+                image.style.backgroundImage =
+                    `url("${promotion.image_url}")`;
+
+                image.style.backgroundSize =
+                    "cover";
+
+                image.style.backgroundPosition =
+                    "center";
+
+                image.style.backgroundRepeat =
+                    "no-repeat";
+
+            } else {
+
+                image.textContent =
+                    "ASPIN";
+
+            }
+
+
+            /* CONTENT */
+
+            const content =
+                document.createElement("div");
+
+            content.className =
+                "promo-content";
+
+
+            /* LABEL */
+
+            const label =
+                document.createElement("p");
+
+            label.className =
+                "promo-label";
+
+            label.textContent =
+                promotion.label ||
+                "FEATURED";
+
+
+            /* TITLE */
+
+            const title =
+                document.createElement("h3");
+
+            title.textContent =
+                promotion.title;
+
+
+            /* DESCRIPTION */
+
+            const description =
+                document.createElement("p");
+
+            description.textContent =
+                promotion.description ||
+                "";
+
+
+            /* BUTTON */
+
+            const button =
+                document.createElement("button");
+
+            button.type =
+                "button";
+
+            button.className =
+                "gold-btn";
+
+            button.textContent =
+                `${promotion.button_text || "LEARN MORE"} →`;
+
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        typeof trackEvent ===
+                        "function"
+                    ) {
+
+                        trackEvent(
+                            "promotion_click",
+                            {
+                                promotion_id:
+                                    String(
+                                        promotion.id
+                                    ),
+
+                                promotion_title:
                                     promotion.title
-                                )}
-                            </h3>
-
-                            ${
-                                promotion.description
-                                    ? `
-                                        <p>
-                                            ${escapeHTML(
-                                                promotion.description
-                                            )}
-                                        </p>
-                                    `
-                                    : ""
                             }
+                        );
 
-                            <div class="promo-action">
+                    }
 
-                                <a
-                                    href="${escapeHTML(
-                                        buttonURL
-                                    )}"
-                                    class="btn btn-secondary"
-                                    ${
-                                        buttonURL.startsWith(
-                                            "http"
-                                        )
-                                            ? `
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            `
-                                            : ""
-                                    }
-                                    data-event="promotion_click"
-                                >
-                                    ${escapeHTML(
-                                        promotion.button_text ||
-                                        "LEARN MORE"
-                                    )}
-                                </a>
 
-                            </div>
+                    /* EXTERNAL URL */
 
-                        </div>
+                    if (
+                        promotion.button_action_type ===
+                        "url"
+                    ) {
 
-                    </article>
-                `;
+                        const url =
+                            promotion.button_url ||
+                            "https://aspin.vip/";
+
+                        window.open(
+                            url,
+                            "_blank",
+                            "noopener,noreferrer"
+                        );
+
+                        return;
+                    }
+
+
+                    /* LONG DESCRIPTION */
+
+                    if (
+                        promotion.button_action_type ===
+                        "content"
+                    ) {
+
+                        openPromotionModal(
+                            promotion.title,
+                            promotion.button_content ||
+                            promotion.description ||
+                            ""
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* TERMS */
+
+            if (
+                promotion.terms_url ||
+                promotion.terms_content
+            ) {
+
+                const terms =
+                    document.createElement("button");
+
+                terms.type =
+                    "button";
+
+                terms.className =
+                    "promotion-terms-link";
+
+                terms.textContent =
+                    "TERMS & CONDITIONS";
+
+
+                terms.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            promotion.terms_action_type ===
+                            "url"
+                        ) {
+
+                            window.open(
+                                promotion.terms_url,
+                                "_blank",
+                                "noopener,noreferrer"
+                            );
+
+                            return;
+                        }
+
+
+                        openPromotionModal(
+                            "TERMS & CONDITIONS",
+                            promotion.terms_content ||
+                            ""
+                        );
+
+                    }
+                );
+
+
+                content.appendChild(
+                    terms
+                );
+
             }
-        ).join("");
+
+
+            content.appendChild(label);
+            content.appendChild(title);
+            content.appendChild(description);
+            content.appendChild(button);
+
+
+            card.appendChild(image);
+            card.appendChild(content);
+
+
+            promoGrid.appendChild(card);
+
+        }
+    );
+
 }
 
 
-/* =========================================================
-   PAYMENTS
-   ========================================================= */
+/* =========================================
+   PROMOTION CONTENT MODAL
+========================================= */
 
-async function loadPayments() {
+function openPromotionModal(
+    title,
+    content
+) {
 
-    const container =
+    let modal =
         document.getElementById(
-            "paymentsGrid"
+            "promotionContentModal"
         );
 
-    if (!container) {
-        return;
-    }
 
-    const {
-        data,
-        error
-    } = await supabaseClient
-        .from("payment_methods")
-        .select("*")
-        .eq("is_published", true)
-        .order("sort_order", {
-            ascending: true
-        });
+    if (!modal) {
 
-    if (error) {
+        modal =
+            document.createElement("div");
 
-        console.error(
-            "Payments error:",
-            error
+        modal.id =
+            "promotionContentModal";
+
+        modal.className =
+            "promotion-content-modal";
+
+
+        modal.innerHTML = `
+
+            <div class="promotion-modal-overlay"></div>
+
+            <div class="promotion-modal-box">
+
+                <button
+                    type="button"
+                    class="promotion-modal-close"
+                    id="promotionModalClose"
+                >
+                    ×
+                </button>
+
+                <h2 id="promotionModalTitle"></h2>
+
+                <div
+                    id="promotionModalContent"
+                    class="promotion-modal-content"
+                ></div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            modal
         );
 
-        container.innerHTML = `
-            <div class="loading-state">
-                Payment information is currently unavailable.
-            </div>
-        `;
 
-        return;
+        document
+            .getElementById(
+                "promotionModalClose"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+                    modal.classList.remove(
+                        "active"
+                    );
+
+                }
+            );
+
+
+        document
+            .querySelector(
+                ".promotion-modal-overlay"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+                    modal.classList.remove(
+                        "active"
+                    );
+
+                }
+            );
+
     }
 
-    if (!data || data.length === 0) {
 
-        container.innerHTML = `
-            <div class="loading-state">
-                No payment methods are currently available.
-            </div>
-        `;
+    document
+        .getElementById(
+            "promotionModalTitle"
+        )
+        .textContent =
+        title;
 
-        return;
-    }
 
-    container.innerHTML =
-        data.map(
-            payment => {
+    document
+        .getElementById(
+            "promotionModalContent"
+        )
+        .textContent =
+        content;
 
-                const name =
-                    payment.name ||
-                    payment.title ||
-                    "Payment Method";
 
-                return `
-                    <article class="payment-card">
+    modal.classList.add(
+        "active"
+    );
 
-                        ${
-                            payment.image_url
-                                ? `
-                                    <img
-                                        src="${escapeHTML(
-                                            payment.image_url
-                                        )}"
-                                        alt="${escapeHTML(
-                                            name
-                                        )}"
-                                        class="payment-image"
-                                        loading="lazy"
-                                    >
-                                `
-                                : ""
-                        }
-
-                        <h3>
-                            ${escapeHTML(name)}
-                        </h3>
-
-                        ${
-                            payment.description
-                                ? `
-                                    <p>
-                                        ${escapeHTML(
-                                            payment.description
-                                        )}
-                                    </p>
-                                `
-                                : ""
-                        }
-
-                    </article>
-                `;
-            }
-        ).join("");
 }
 
 
-/* =========================================================
-   FAQ
-   ========================================================= */
+/* =========================================
+   DYNAMIC FAQS
+========================================= */
 
-async function loadFAQs() {
+async function loadPublicFaqs() {
 
-    const container =
-        document.getElementById(
-            "faqList"
+    const faqContainer =
+        document.querySelector(
+            ".faq-container"
         );
 
-    if (!container) {
+
+    if (
+        !faqContainer ||
+        typeof supabaseClient === "undefined"
+    ) {
         return;
     }
+
 
     const {
         data,
         error
     } = await supabaseClient
         .from("faqs")
-        .select("*")
+        .select(
+            "id, question, answer, sort_order, created_at"
+        )
         .eq("is_published", true)
         .order("sort_order", {
             ascending: true
+        })
+        .order("created_at", {
+            ascending: false
         });
+
 
     if (error) {
 
         console.error(
-            "FAQ error:",
+            "Unable to load FAQs:",
             error
         );
 
-        container.innerHTML = `
-            <div class="loading-state">
-                FAQs are currently unavailable.
-            </div>
+        return;
+    }
+
+
+    faqContainer.innerHTML = "";
+
+
+    if (!data || !data.length) {
+
+        faqContainer.innerHTML = `
+            <p class="faq-empty">
+                No FAQs available at this time.
+            </p>
         `;
 
         return;
     }
 
-    if (!data || data.length === 0) {
 
-        container.innerHTML = `
-            <div class="loading-state">
-                No FAQs are currently available.
-            </div>
-        `;
+    data.forEach(
+        (faq, index) => {
 
-        return;
-    }
+            const details =
+                document.createElement("details");
 
-    container.innerHTML =
-        data.map(
-            faq => {
-
-                const question =
-                    faq.question ||
-                    faq.title ||
-                    "";
-
-                const answer =
-                    faq.answer ||
-                    faq.description ||
-                    "";
-
-                return `
-                    <div class="faq-item">
-
-                        <button
-                            class="faq-question"
-                            type="button"
-                        >
-
-                            <span>
-                                ${escapeHTML(
-                                    question
-                                )}
-                            </span>
-
-                            <span class="faq-icon">
-                                +
-                            </span>
-
-                        </button>
-
-                        <div class="faq-answer">
-
-                            <div class="faq-answer-inner">
-                                ${escapeHTML(
-                                    answer
-                                )}
-                            </div>
-
-                        </div>
-
-                    </div>
-                `;
-            }
-        ).join("");
+            details.dataset.track =
+                `faq_${faq.id}`;
 
 
-    setupFAQAccordion();
-}
+            const summary =
+                document.createElement("summary");
+
+            summary.textContent =
+                faq.question;
 
 
-function setupFAQAccordion() {
+            const answer =
+                document.createElement("p");
 
-    const questions =
-        document.querySelectorAll(
-            ".faq-question"
-        );
+            answer.textContent =
+                faq.answer;
 
-    questions.forEach(
-        question => {
 
-            question.addEventListener(
-                "click",
+            details.appendChild(
+                summary
+            );
+
+            details.appendChild(
+                answer
+            );
+
+
+            details.addEventListener(
+                "toggle",
                 function () {
 
-                    const item =
-                        this.closest(
-                            ".faq-item"
-                        );
+                    if (
+                        this.open &&
+                        typeof trackEvent ===
+                        "function"
+                    ) {
 
-                    const answer =
-                        item.querySelector(
-                            ".faq-answer"
-                        );
+                        trackEvent(
+                            "faq_open",
+                            {
+                                faq_id:
+                                    String(faq.id),
 
-                    const isActive =
-                        item.classList.contains(
-                            "active"
-                        );
-
-
-                    document
-                        .querySelectorAll(
-                            ".faq-item.active"
-                        )
-                        .forEach(
-                            activeItem => {
-
-                                activeItem.classList.remove(
-                                    "active"
-                                );
-
-                                activeItem
-                                    .querySelector(
-                                        ".faq-answer"
-                                    )
-                                    .style.maxHeight =
-                                    null;
+                                question:
+                                    faq.question
                             }
                         );
 
-
-                    if (!isActive) {
-
-                        item.classList.add(
-                            "active"
-                        );
-
-                        answer.style.maxHeight =
-                            answer.scrollHeight +
-                            "px";
-
                     }
 
                 }
             );
 
-        }
-    );
-}
 
-
-/* =========================================================
-   SITE SETTINGS
-   ========================================================= */
-
-async function loadSiteSettings() {
-
-    try {
-
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .from("site_settings")
-            .select("*");
-
-        if (error) {
-            console.warn(
-                "Settings error:",
-                error
-            );
-            return;
-        }
-
-        if (!data) {
-            return;
-        }
-
-        const settings = {};
-
-        data.forEach(
-            item => {
-                settings[item.key] =
-                    item.value;
-            }
-        );
-
-        if (
-            settings.site_name
-        ) {
-
-            document.title =
-                `${settings.site_name} | Official`;
-
-        }
-
-        const description =
-            document.querySelector(
-                'meta[name="description"]'
-            );
-
-        if (
-            description &&
-            settings.site_description
-        ) {
-
-            description.setAttribute(
-                "content",
-                settings.site_description
-            );
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "Unable to load settings:",
-            error
-        );
-
-    }
-}
-
-
-/* =========================================================
-   SUBSCRIPTION
-   ========================================================= */
-
-const subscribeForm =
-    document.getElementById(
-        "subscribeForm"
-    );
-
-if (subscribeForm) {
-
-    subscribeForm.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-            const email =
-                document.getElementById(
-                    "subscriberEmail"
-                ).value.trim();
-
-            const phone =
-                document.getElementById(
-                    "subscriberPhone"
-                ).value.trim();
-
-            const consent =
-                document.getElementById(
-                    "subscriberConsent"
-                ).checked;
-
-            const message =
-                document.getElementById(
-                    "subscribeMessage"
-                );
-
-
-            if (!consent) {
-
-                message.textContent =
-                    "Please accept the subscription consent.";
-
-                return;
-            }
-
-
-            message.textContent =
-                "Submitting...";
-
-
-            const {
-                error
-            } = await supabaseClient
-                .from("subscribers")
-                .insert({
-                    email: email,
-                    phone: phone,
-                    consent: true,
-                    is_active: true
-                });
-
-
-            if (error) {
-
-                console.error(
-                    "Subscription error:",
-                    error
-                );
-
-                if (
-                    error.code ===
-                    "23505"
-                ) {
-
-                    message.textContent =
-                        "This email is already subscribed.";
-
-                } else {
-
-                    message.textContent =
-                        "Unable to subscribe right now. Please try again.";
-
-                }
-
-                return;
-            }
-
-
-            message.textContent =
-                "Thank you. You are now subscribed.";
-
-            subscribeForm.reset();
-
-            trackEvent(
-                "newsletter_subscribe",
-                {
-                    subscription_method:
-                        "website_form"
-                }
-            );
-
-            trackMetaEvent(
-                "CompleteRegistration"
+            faqContainer.appendChild(
+                details
             );
 
         }
     );
-}
-
-
-/* =========================================================
-   MOBILE NAVIGATION
-   ========================================================= */
-
-const mobileMenuBtn =
-    document.getElementById(
-        "mobileMenuBtn"
-    );
-
-const mobileNav =
-    document.getElementById(
-        "mobileNav"
-    );
-
-
-if (
-    mobileMenuBtn &&
-    mobileNav
-) {
-
-    mobileMenuBtn.addEventListener(
-        "click",
-        function () {
-
-            const isOpen =
-                mobileNav.classList.toggle(
-                    "active"
-                );
-
-            mobileMenuBtn.setAttribute(
-                "aria-expanded",
-                isOpen
-            );
-
-        }
-    );
-
-
-    mobileNav
-        .querySelectorAll("a")
-        .forEach(
-            link => {
-
-                link.addEventListener(
-                    "click",
-                    function () {
-
-                        mobileNav.classList.remove(
-                            "active"
-                        );
-
-                        mobileMenuBtn.setAttribute(
-                            "aria-expanded",
-                            "false"
-                        );
-
-                    }
-                );
-
-            }
-        );
-}
-
-
-/* =========================================================
-   PAGE VIEW
-   ========================================================= */
-
-trackEvent(
-    "page_view",
-    {
-        page_title:
-            document.title
-    }
-);
-
-
-/* =========================================================
-   CURRENT YEAR
-   ========================================================= */
-
-const year =
-    document.getElementById(
-        "currentYear"
-    );
-
-if (year) {
-
-    year.textContent =
-        new Date().getFullYear();
 
 }
 
 
-/* =========================================================
-   INITIAL LOAD
-   ========================================================= */
+/* =========================================
+   LOAD CMS CONTENT
+========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    async function () {
+    function () {
 
-        await Promise.all([
-            loadPromotions(),
-            loadPayments(),
-            loadFAQs(),
-            loadSiteSettings()
-        ]);
+        loadPublicPromotions();
+        loadPublicFaqs();
 
     }
 );
+
+/* =========================
+   MOBILE MENU AUTO-CLOSE
+========================= */
+
+const mobileMenuToggle =
+    document.getElementById("mobile-menu-toggle");
+
+const mobileMenu =
+    document.querySelector(".navbar nav");
+
+const mobileMenuButton =
+    document.querySelector(".mobile-menu-button");
+
+
+/* Close menu when clicking a navigation link */
+if (mobileMenu && mobileMenuToggle) {
+
+    mobileMenu
+        .querySelectorAll("a")
+        .forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                mobileMenuToggle.checked = false;
+
+            });
+
+        });
+}
+
+
+/* Close menu when clicking outside the navbar */
+document.addEventListener("click", (event) => {
+
+    if (!mobileMenuToggle || !mobileMenu) {
+        return;
+    }
+
+    if (!mobileMenuToggle.checked) {
+        return;
+    }
+
+    const navbar =
+        document.querySelector(".navbar");
+
+    if (
+        navbar &&
+        !navbar.contains(event.target)
+    ) {
+
+        mobileMenuToggle.checked = false;
+
+    }
+
+});
+
+/* Close menu when pressing ESC */
+document.addEventListener("keydown", (event) => {
+
+    if (
+        event.key === "Escape" &&
+        mobileMenuToggle
+    ) {
+
+        mobileMenuToggle.checked = false;
+
+    }
+
+});
