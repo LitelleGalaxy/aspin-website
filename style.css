@@ -841,8 +841,9 @@ a {
 
 
 .promo-image {
+    width: 100%;
     height: auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1;
 
     display: flex;
     align-items: center;
@@ -860,7 +861,7 @@ a {
         ),
         #130607;
 
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
 }
