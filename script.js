@@ -855,6 +855,9 @@ async function loadPublicPromotions() {
                     "p"
                 );
 
+           description.className =
+                "promo-description";
+
             description.textContent =
                 promotion.description ||
                 "";
