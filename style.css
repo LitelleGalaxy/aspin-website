@@ -2618,4 +2618,180 @@ footer {
 
 }
 
+/* =========================================
+   MOBILE / TABLET PROMOTION LAYOUT
+========================================= */
+
+@media (max-width: 900px) {
+
+    .promo-grid {
+        width: 100%;
+        max-width: none;
+
+        margin: 0 auto;
+
+        padding: 0 16px;
+
+        box-sizing: border-box;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 18px;
+    }
+
+
+    .promo-card {
+        width: 100%;
+        max-width: 700px;
+
+        flex: none;
+
+        display: grid;
+
+        grid-template-columns: 38% 62%;
+
+        align-items: stretch;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =========================
+       1:1 IMAGE
+    ========================= */
+
+    .promo-image {
+        width: 100%;
+
+        aspect-ratio: 1 / 1;
+
+        height: auto;
+
+        min-height: 0;
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    /* =========================
+       CONTENT
+    ========================= */
+
+    .promo-content {
+        min-width: 0;
+
+        padding: 18px;
+
+        box-sizing: border-box;
+
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+    }
+
+
+    .promo-label {
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .promo-content h3 {
+        font-size: 16px;
+
+        line-height: 1.3;
+
+        margin: 8px 0;
+    }
+
+
+    .promo-description {
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    .promo-period {
+        margin-top: 12px;
+
+        padding-top: 10px;
+    }
+
+
+    .promo-period-label {
+        font-size: 8px;
+
+        letter-spacing: 1.5px;
+    }
+
+
+    .promo-period-dates {
+        font-size: 10px;
+
+        line-height: 1.4;
+    }
+
+
+    .promo-read-more {
+        font-size: 9px;
+
+        margin-top: 6px;
+    }
+
+
+    .promo-content .gold-btn {
+        margin-top: 14px;
+
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 500px) {
+
+    .promo-grid {
+        padding: 0 12px;
+    }
+
+
+    .promo-card {
+        grid-template-columns: 38% 62%;
+    }
+
+
+    .promo-content {
+        padding: 14px;
+    }
+
+
+    .promo-content h3 {
+        font-size: 14px;
+    }
+
+
+    .promo-description {
+        font-size: 10px;
+    }
+
+
+    .promo-period-dates {
+        font-size: 9px;
+    }
+
+}
+
 
