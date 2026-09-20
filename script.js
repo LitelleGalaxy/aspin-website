@@ -848,19 +848,119 @@ async function loadPublicPromotions() {
                 promotion.title;
 
 
-            /* DESCRIPTION */
+           /* =========================================
+   DESCRIPTION
+========================================= */
 
-            const description =
-                document.createElement(
-                    "p"
+const descriptionWrap =
+    document.createElement("div");
+
+descriptionWrap.className =
+    "promo-description-wrap";
+
+
+const description =
+    document.createElement("p");
+
+description.className =
+    "promo-description";
+
+description.textContent =
+    promotion.description ||
+    "";
+
+
+descriptionWrap.appendChild(
+    description
+);
+
+
+/* =========================================
+   READ MORE / SHOW LESS
+========================================= */
+
+const fullDescription =
+    promotion.description || "";
+
+
+/*
+ * Only show READ MORE when the
+ * description is actually long.
+ */
+
+if (
+    fullDescription.length > 120
+) {
+
+    const readMore =
+        document.createElement("button");
+
+    readMore.type =
+        "button";
+
+    readMore.className =
+        "promo-read-more";
+
+    readMore.textContent =
+        "READ MORE";
+
+
+    readMore.addEventListener(
+        "click",
+        function () {
+
+            const card =
+                readMore.closest(
+                    ".promo-card"
                 );
 
-           description.className =
-                "promo-description";
 
-            description.textContent =
-                promotion.description ||
-                "";
+            if (
+                card.classList.contains(
+                    "expanded"
+                )
+            ) {
+
+                card.classList.remove(
+                    "expanded"
+                );
+
+                readMore.textContent =
+                    "READ MORE";
+
+
+                /*
+                 * Return the visitor to the
+                 * top of the card content.
+                 */
+
+                card.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+
+            }
+
+            else {
+
+                card.classList.add(
+                    "expanded"
+                );
+
+                readMore.textContent =
+                    "SHOW LESS";
+
+            }
+
+        }
+    );
+
+
+    descriptionWrap.appendChild(
+        readMore
+    );
+
+}
 
 
             /* =========================
@@ -1009,7 +1109,7 @@ async function loadPublicPromotions() {
             );
 
             content.appendChild(
-                description
+                descriptionWrap
             );
 
 
