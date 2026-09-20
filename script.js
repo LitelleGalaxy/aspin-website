@@ -551,43 +551,143 @@ if (successModal) {
    DYNAMIC PROMOTIONS
 ========================================= */
 
-async function loadPublicPromotions() {
+function formatPromotionDate(dateString) {
 
-    const promoGrid =
-        document.getElementById("promoGrid");
+    if (!dateString) {
+        return "";
+    }
+
+    const date = new Date(
+        `${dateString}T00:00:00`
+    );
+
+    if (isNaN(date.getTime())) {
+        return dateString;
+    }
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        }
+    );
+}
+
+
+function isPromotionCurrentlyPublished(promotion) {
+
+    const now = new Date();
+
+    /*
+     * If PUBLISH START is set,
+     * don't show the promotion before that time.
+     */
 
     if (
-        !promoGrid ||
-        typeof supabaseClient === "undefined"
+        promotion.publish_start_at
     ) {
-        console.error(
-            "Supabase client is not available."
-        );
 
-        return;
+        const publishStart =
+            new Date(
+                promotion.publish_start_at
+            );
+
+        if (
+            !isNaN(publishStart.getTime()) &&
+            now < publishStart
+        ) {
+
+            return false;
+
+        }
+
     }
 
 
-    const today =
-        new Date()
-            .toISOString()
-            .split("T")[0];
+    /*
+     * If PUBLISH END is set,
+     * stop showing the promotion after that time.
+     */
+
+    if (
+        promotion.publish_end_at
+    ) {
+
+        const publishEnd =
+            new Date(
+                promotion.publish_end_at
+            );
+
+        if (
+            !isNaN(publishEnd.getTime()) &&
+            now > publishEnd
+        ) {
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+async function loadPublicPromotions() {
+
+    const promoGrid =
+        document.getElementById(
+            "promoGrid"
+        );
+
+
+    if (
+        !promoGrid ||
+        typeof supabaseClient ===
+        "undefined"
+    ) {
+
+        return;
+
+    }
 
 
     const {
         data,
         error
     } = await supabaseClient
+
         .from("promotions")
+
         .select("*")
-        .eq("is_published", true)
-        .eq("is_active", true)
-        .order("sort_order", {
-            ascending: true
-        })
-        .order("created_at", {
-            ascending: false
-        });
+
+        .eq(
+            "is_published",
+            true
+        )
+
+        .eq(
+            "is_active",
+            true
+        )
+
+        .order(
+            "sort_order",
+            {
+                ascending: true
+            }
+        )
+
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
 
 
     if (error) {
@@ -598,78 +698,94 @@ async function loadPublicPromotions() {
         );
 
         promoGrid.innerHTML = `
+
             <div class="promo-empty">
-                <p>Unable to load promotions.</p>
+
+                <p>
+                    Unable to load promotions.
+                </p>
+
             </div>
+
         `;
 
         return;
+
     }
 
 
-    /* DATE FILTER */
+    /*
+     * Apply PUBLISH START / PUBLISH END.
+     *
+     * These dates control website visibility.
+     *
+     * PROMO START / PROMO END do NOT
+     * control visibility.
+     */
 
-    const promotions =
+    const visiblePromotions =
         (data || []).filter(
-            promotion => {
-
-                if (
-                    promotion.start_date &&
-                    promotion.start_date > today
-                ) {
-                    return false;
-                }
-
-
-                if (
-                    promotion.end_date &&
-                    promotion.end_date < today
-                ) {
-                    return false;
-                }
-
-
-                return true;
-
-            }
+            promotion =>
+                isPromotionCurrentlyPublished(
+                    promotion
+                )
         );
 
 
     promoGrid.innerHTML = "";
 
 
-    if (!promotions.length) {
+    if (
+        visiblePromotions.length ===
+        0
+    ) {
 
         promoGrid.innerHTML = `
+
             <div class="promo-empty">
-                <p>No promotions available at this time.</p>
+
+                <p>
+                    No promotions available at this time.
+                </p>
+
             </div>
+
         `;
 
         return;
+
     }
 
 
-    promotions.forEach(
+    visiblePromotions.forEach(
         promotion => {
 
+
             const card =
-                document.createElement("article");
+                document.createElement(
+                    "article"
+                );
 
             card.className =
                 "promo-card";
 
 
-            /* IMAGE */
+            /* =========================
+               IMAGE
+            ========================= */
 
             const image =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             image.className =
                 "promo-image";
 
 
-            if (promotion.image_url) {
+            if (
+                promotion.image_url
+            ) {
 
                 image.style.backgroundImage =
                     `url("${promotion.image_url}")`;
@@ -683,7 +799,9 @@ async function loadPublicPromotions() {
                 image.style.backgroundRepeat =
                     "no-repeat";
 
-            } else {
+            }
+
+            else {
 
                 image.textContent =
                     "ASPIN";
@@ -691,10 +809,14 @@ async function loadPublicPromotions() {
             }
 
 
-            /* CONTENT */
+            /* =========================
+               CONTENT
+            ========================= */
 
             const content =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             content.className =
                 "promo-content";
@@ -703,7 +825,9 @@ async function loadPublicPromotions() {
             /* LABEL */
 
             const label =
-                document.createElement("p");
+                document.createElement(
+                    "p"
+                );
 
             label.className =
                 "promo-label";
@@ -716,7 +840,9 @@ async function loadPublicPromotions() {
             /* TITLE */
 
             const title =
-                document.createElement("h3");
+                document.createElement(
+                    "h3"
+                );
 
             title.textContent =
                 promotion.title;
@@ -725,26 +851,118 @@ async function loadPublicPromotions() {
             /* DESCRIPTION */
 
             const description =
-                document.createElement("p");
+                document.createElement(
+                    "p"
+                );
 
             description.textContent =
                 promotion.description ||
                 "";
 
 
-            /* BUTTON */
+            /* =========================
+               PROMOTION DURATION
+            ========================= */
+
+            const duration =
+                document.createElement(
+                    "div"
+                );
+
+            duration.className =
+                "promo-duration";
+
+
+            if (
+                promotion.start_date &&
+                promotion.end_date
+            ) {
+
+                duration.innerHTML = `
+
+                    <span class="promo-duration-label">
+                        PROMO PERIOD
+                    </span>
+
+                    <span class="promo-duration-dates">
+                        ${formatPromotionDate(
+                            promotion.start_date
+                        )}
+                        -
+                        ${formatPromotionDate(
+                            promotion.end_date
+                        )}
+                    </span>
+
+                `;
+
+            }
+
+            else if (
+                promotion.start_date
+            ) {
+
+                duration.innerHTML = `
+
+                    <span class="promo-duration-label">
+                        PROMO STARTS
+                    </span>
+
+                    <span class="promo-duration-dates">
+                        ${formatPromotionDate(
+                            promotion.start_date
+                        )}
+                    </span>
+
+                `;
+
+            }
+
+            else if (
+                promotion.end_date
+            ) {
+
+                duration.innerHTML = `
+
+                    <span class="promo-duration-label">
+                        PROMO ENDS
+                    </span>
+
+                    <span class="promo-duration-dates">
+                        ${formatPromotionDate(
+                            promotion.end_date
+                        )}
+                    </span>
+
+                `;
+
+            }
+
+
+            /* =========================
+               BUTTON
+            ========================= */
 
             const button =
-                document.createElement("button");
+                document.createElement(
+                    "a"
+                );
 
-            button.type =
-                "button";
-
-            button.className =
-                "gold-btn";
+            button.href =
+                promotion.button_url ||
+                "https://aspin.vip/";
 
             button.textContent =
-                `${promotion.button_text || "LEARN MORE"} →`;
+                `${
+                    promotion.button_text ||
+                    "LEARN MORE"
+                } →`;
+
+            button.target =
+                "_blank";
+
+            button.rel =
+                "noopener noreferrer";
 
 
             button.addEventListener(
@@ -771,120 +989,75 @@ async function loadPublicPromotions() {
 
                     }
 
-
-                    /* EXTERNAL URL */
-
-                    if (
-                        promotion.button_action_type ===
-                        "url"
-                    ) {
-
-                        const url =
-                            promotion.button_url ||
-                            "https://aspin.vip/";
-
-                        window.open(
-                            url,
-                            "_blank",
-                            "noopener,noreferrer"
-                        );
-
-                        return;
-                    }
-
-
-                    /* LONG DESCRIPTION */
-
-                    if (
-                        promotion.button_action_type ===
-                        "content"
-                    ) {
-
-                        openPromotionModal(
-                            promotion.title,
-                            promotion.button_content ||
-                            promotion.description ||
-                            ""
-                        );
-
-                    }
-
                 }
             );
 
 
-            /* TERMS */
+            /* =========================
+               BUILD CARD
+            ========================= */
+
+            content.appendChild(
+                label
+            );
+
+            content.appendChild(
+                title
+            );
+
+            content.appendChild(
+                description
+            );
+
+
+            /*
+             * Only add the duration
+             * if at least one promo
+             * date exists.
+             */
 
             if (
-                promotion.terms_url ||
-                promotion.terms_content
+                promotion.start_date ||
+                promotion.end_date
             ) {
 
-                const terms =
-                    document.createElement("button");
-
-                terms.type =
-                    "button";
-
-                terms.className =
-                    "promotion-terms-link";
-
-                terms.textContent =
-                    "TERMS & CONDITIONS";
-
-
-                terms.addEventListener(
-                    "click",
-                    function () {
-
-                        if (
-                            promotion.terms_action_type ===
-                            "url"
-                        ) {
-
-                            window.open(
-                                promotion.terms_url,
-                                "_blank",
-                                "noopener,noreferrer"
-                            );
-
-                            return;
-                        }
-
-
-                        openPromotionModal(
-                            "TERMS & CONDITIONS",
-                            promotion.terms_content ||
-                            ""
-                        );
-
-                    }
-                );
-
-
                 content.appendChild(
-                    terms
+                    duration
                 );
 
             }
 
 
-            content.appendChild(label);
-            content.appendChild(title);
-            content.appendChild(description);
-            content.appendChild(button);
+            content.appendChild(
+                button
+            );
 
 
-            card.appendChild(image);
-            card.appendChild(content);
+            card.appendChild(
+                image
+            );
+
+            card.appendChild(
+                content
+            );
 
 
-            promoGrid.appendChild(card);
+            promoGrid.appendChild(
+                card
+            );
 
         }
     );
 
 }
+
+
+/* Load promotions when page is ready */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadPublicPromotions
+);
 
 
 /* =========================================
