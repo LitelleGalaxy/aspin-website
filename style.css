@@ -934,6 +934,39 @@ a {
     line-height: 1.5;
 }
 
+/* =========================================
+   PROMOTION CARD SPACING
+========================================= */
+
+.promo-description {
+    margin-bottom: 18px;
+}
+
+.promo-duration {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(212, 175, 55, 0.25);
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.promo-duration-label {
+    color: #d4af37;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.promo-duration-dates {
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 
 /* =========================
    PAYMENTS
@@ -2255,3 +2288,5 @@ footer {
     }
 
 }
+
+
