@@ -841,17 +841,15 @@ a {
 
 
 .promo-image {
-    height: 180px;
+    height: auto;
+    aspect-ratio: 4 / 5;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     font-family: 'Cinzel', serif;
-
     font-size: 25px;
-
     color: var(--gold-light);
 
     background:
@@ -861,6 +859,10 @@ a {
             transparent 65%
         ),
         #130607;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 
