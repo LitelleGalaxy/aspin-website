@@ -382,11 +382,70 @@ const exitSuccessBtn =
     document.getElementById("exitSuccessBtn");
 
 
+/* ================================
+   NEWSLETTER
+================================ */
+
+const form =
+    document.getElementById(
+        "subscribeForm"
+    );
+
+const successModal =
+    document.getElementById(
+        "successModal"
+    );
+
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+
+/* EMAIL VALIDATION */
+
+if (emailInput) {
+
+    emailInput.addEventListener(
+        "input",
+        function () {
+
+            if (/\s/.test(this.value)) {
+
+                this.setCustomValidity(
+                    "Email address must not contain spaces."
+                );
+
+            } else if (
+                this.value &&
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                    this.value
+                )
+            ) {
+
+                this.setCustomValidity(
+                    "Please enter a valid email address."
+                );
+
+            } else {
+
+                this.setCustomValidity("");
+
+            }
+
+        }
+    );
+
+}
+
+
+/* SUBMIT */
+
 if (form) {
 
     form.addEventListener(
         "submit",
-        function(event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -402,7 +461,8 @@ if (form) {
                 document
                     .getElementById("email")
                     .value
-                    .trim();
+                    .trim()
+                    .toLowerCase();
 
 
             const phone =
@@ -418,6 +478,8 @@ if (form) {
                     .checked;
 
 
+            /* REQUIRED FIELDS */
+
             if (
                 !email ||
                 !consent
@@ -430,6 +492,260 @@ if (form) {
                 return;
 
             }
+
+
+            /* =========================
+               SAVE SUBSCRIBER
+            ========================= */
+
+            if (
+                typeof supabaseClient !==
+                "undefined"
+            ) {
+
+                try {
+
+                    const {
+                        data: existingSubscriber,
+                        error: lookupError
+                    } = await supabaseClient
+                        .from("subscribers")
+                        .select(
+                            "id, is_active"
+                        )
+                        .eq(
+                            "email",
+                            email
+                        )
+                        .maybeSingle();
+
+
+                    if (lookupError) {
+
+                        console.error(
+                            "Subscriber lookup failed:",
+                            lookupError
+                        );
+
+                        alert(
+                            "Unable to process your subscription. Please try again."
+                        );
+
+                        return;
+
+                    }
+
+
+                    /* =========================
+                       EXISTING SUBSCRIBER
+                    ========================= */
+
+                    if (
+                        existingSubscriber
+                    ) {
+
+                        const {
+                            error:
+                                updateError
+                        } =
+                            await supabaseClient
+                                .from(
+                                    "subscribers"
+                                )
+                                .update({
+                                    name:
+                                        name ||
+                                        null,
+
+                                    phone:
+                                        phone ||
+                                        null,
+
+                                    consent:
+                                        true,
+
+                                    is_active:
+                                        true,
+
+                                    updated_at:
+                                        new Date()
+                                            .toISOString()
+                                })
+                                .eq(
+                                    "id",
+                                    existingSubscriber.id
+                                );
+
+
+                        if (updateError) {
+
+                            console.error(
+                                "Subscriber update failed:",
+                                updateError
+                            );
+
+                            alert(
+                                "Unable to update your subscription. Please try again."
+                            );
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    /* =========================
+                       NEW SUBSCRIBER
+                    ========================= */
+
+                    else {
+
+                        const {
+                            error:
+                                insertError
+                        } =
+                            await supabaseClient
+                                .from(
+                                    "subscribers"
+                                )
+                                .insert({
+                                    name:
+                                        name ||
+                                        null,
+
+                                    email:
+                                        email,
+
+                                    phone:
+                                        phone ||
+                                        null,
+
+                                    consent:
+                                        true,
+
+                                    is_active:
+                                        true
+                                });
+
+
+                        if (insertError) {
+
+                            console.error(
+                                "Subscriber insert failed:",
+                                insertError
+                            );
+
+                            alert(
+                                "Unable to complete your subscription. Please try again."
+                            );
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    /* =========================
+                       ANALYTICS
+                    ========================= */
+
+                    if (
+                        typeof trackEvent ===
+                        "function"
+                    ) {
+
+                        trackEvent(
+                            "newsletter_subscribe",
+                            {
+                                method:
+                                    "website"
+                            }
+                        );
+
+                    }
+
+
+                    /* GOOGLE ANALYTICS */
+
+                    if (
+                        typeof gtag ===
+                        "function"
+                    ) {
+
+                        gtag(
+                            "event",
+                            "newsletter_subscribe",
+                            {
+                                method:
+                                    "website",
+
+                                traffic_source:
+                                    getTrafficSource(),
+
+                                ...savedUTM
+                            }
+                        );
+
+                    }
+
+
+                    /* META PIXEL */
+
+                    if (
+                        typeof fbq ===
+                        "function"
+                    ) {
+
+                        fbq(
+                            "track",
+                            "Lead",
+                            {
+                                source:
+                                    getTrafficSource()
+                            }
+                        );
+
+                    }
+
+
+                    /* RESET FORM */
+
+                    form.reset();
+
+
+                    /* SHOW SUCCESS */
+
+                    if (successModal) {
+
+                        successModal.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Newsletter error:",
+                        error
+                    );
+
+                    alert(
+                        "Something went wrong. Please try again."
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
 
 
             /* Google Analytics */
