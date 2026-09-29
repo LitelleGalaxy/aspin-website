@@ -1593,6 +1593,36 @@ details p {
     font-size: 12px;
 }
 
+/* =========================
+   FAQ CATEGORIES
+========================= */
+
+.faq-category-title {
+    margin-top: 30px;
+    margin-bottom: 5px;
+
+    padding: 0 5px;
+
+    color: var(--gold-light);
+
+    font-family: 'Cinzel', serif;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+/* First category */
+
+.faq-container .faq-category-title:first-child {
+    margin-top: 0;
+}
+
 
 /* =========================
    FINAL CTA
@@ -2790,6 +2820,113 @@ footer {
 
     .promo-period-dates {
         font-size: 9px;
+    }
+
+}
+/* =========================================
+   FAQ COLLAPSIBLE CATEGORIES
+========================================= */
+
+.faq-category {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+
+/* CATEGORY HEADER */
+
+.faq-category-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: transparent;
+    border: none;
+
+    padding: 18px 5px;
+
+    color: #e5bd52;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        color 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.faq-category-toggle:hover {
+    color: #ffffff;
+}
+
+
+/* CATEGORY ARROW */
+
+.faq-category-arrow {
+    font-size: 10px;
+
+    margin-left: 15px;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+/* ROTATE ARROW WHEN OPEN */
+
+.faq-category-toggle[aria-expanded="true"]
+.faq-category-arrow {
+    transform: rotate(180deg);
+}
+
+
+/* FAQ ITEMS */
+
+.faq-category-items {
+    display: none;
+
+    width: 100%;
+}
+
+
+.faq-category-items.active {
+    display: block;
+}
+
+
+/* =========================================
+   KEEP EXISTING FAQ QUESTION STYLE
+========================================= */
+
+.faq-category-items details {
+    width: 100%;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .faq-category-toggle {
+        padding: 16px 5px;
+
+        font-size: 14px;
+
+        letter-spacing: 1.5px;
+    }
+
+    .faq-category {
+        margin-bottom: 8px;
     }
 
 }
