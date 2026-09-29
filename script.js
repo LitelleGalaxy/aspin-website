@@ -267,7 +267,7 @@ document
 
 document
     .querySelectorAll(
-        'a[href*="aspin.vip"]'
+        'a[href*="aspin.live/register"]'
     )
     .forEach(button => {
 
@@ -284,7 +284,7 @@ document
                             this.textContent.trim(),
 
                         destination:
-                            "aspin.vip"
+                            "aspin.live/register"
 
                     }
                 );
@@ -336,61 +336,6 @@ const form =
         "subscribeForm"
     );
 
-const success =
-    document.getElementById(
-        "successMessage"
-    );
-
-const emailInput =
-    document.getElementById(
-        "email"
-    );
-
-
-emailInput.addEventListener(
-    "input",
-    function () {
-
-        if (/\s/.test(this.value)) {
-
-            this.setCustomValidity(
-                "Email address must not contain spaces."
-            );
-
-        } else if (
-            this.value &&
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)
-        ) {
-
-            this.setCustomValidity(
-                "Please enter a valid email address."
-            );
-
-        } else {
-
-            this.setCustomValidity("");
-
-        }
-
-    }
-);
-
-const explorePromotionsBtn =
-    document.getElementById("explorePromotionsBtn");
-
-const exitSuccessBtn =
-    document.getElementById("exitSuccessBtn");
-
-
-/* ================================
-   NEWSLETTER
-================================ */
-
-const form =
-    document.getElementById(
-        "subscribeForm"
-    );
-
 const successModal =
     document.getElementById(
         "successModal"
@@ -399,6 +344,16 @@ const successModal =
 const emailInput =
     document.getElementById(
         "email"
+    );
+
+const explorePromotionsBtn =
+    document.getElementById(
+        "explorePromotionsBtn"
+    );
+
+const exitSuccessBtn =
+    document.getElementById(
+        "exitSuccessBtn"
     );
 
 
@@ -449,13 +404,11 @@ if (form) {
 
             event.preventDefault();
 
-
             const name =
                 document
                     .getElementById("name")
                     .value
                     .trim();
-
 
             const email =
                 document
@@ -464,26 +417,18 @@ if (form) {
                     .trim()
                     .toLowerCase();
 
-
             const phone =
                 document
                     .getElementById("phone")
                     .value
                     .trim();
 
-
             const consent =
                 document
                     .getElementById("consent")
                     .checked;
 
-
-            /* REQUIRED FIELDS */
-
-            if (
-                !email ||
-                !consent
-            ) {
+            if (!email || !consent) {
 
                 alert(
                     "Please enter your email address and agree to receive promotional communications."
@@ -492,11 +437,6 @@ if (form) {
                 return;
 
             }
-
-
-            /* =========================
-               SAVE SUBSCRIBER
-            ========================= */
 
             if (
                 typeof supabaseClient !==
@@ -510,15 +450,9 @@ if (form) {
                         error: lookupError
                     } = await supabaseClient
                         .from("subscribers")
-                        .select(
-                            "id, is_active"
-                        )
-                        .eq(
-                            "email",
-                            email
-                        )
+                        .select("id, is_active")
+                        .eq("email", email)
                         .maybeSingle();
-
 
                     if (lookupError) {
 
@@ -535,47 +469,23 @@ if (form) {
 
                     }
 
-
-                    /* =========================
-                       EXISTING SUBSCRIBER
-                    ========================= */
-
-                    if (
-                        existingSubscriber
-                    ) {
+                    if (existingSubscriber) {
 
                         const {
-                            error:
-                                updateError
-                        } =
-                            await supabaseClient
-                                .from(
-                                    "subscribers"
-                                )
-                                .update({
-                                    name:
-                                        name ||
-                                        null,
-
-                                    phone:
-                                        phone ||
-                                        null,
-
-                                    consent:
-                                        true,
-
-                                    is_active:
-                                        true,
-
-                                    updated_at:
-                                        new Date()
-                                            .toISOString()
-                                })
-                                .eq(
-                                    "id",
-                                    existingSubscriber.id
-                                );
-
+                            error: updateError
+                        } = await supabaseClient
+                            .from("subscribers")
+                            .update({
+                                name: name || null,
+                                phone: phone || null,
+                                consent: true,
+                                is_active: true,
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq(
+                                "id",
+                                existingSubscriber.id
+                            );
 
                         if (updateError) {
 
@@ -592,42 +502,19 @@ if (form) {
 
                         }
 
-                    }
-
-
-                    /* =========================
-                       NEW SUBSCRIBER
-                    ========================= */
-
-                    else {
+                    } else {
 
                         const {
-                            error:
-                                insertError
-                        } =
-                            await supabaseClient
-                                .from(
-                                    "subscribers"
-                                )
-                                .insert({
-                                    name:
-                                        name ||
-                                        null,
-
-                                    email:
-                                        email,
-
-                                    phone:
-                                        phone ||
-                                        null,
-
-                                    consent:
-                                        true,
-
-                                    is_active:
-                                        true
-                                });
-
+                            error: insertError
+                        } = await supabaseClient
+                            .from("subscribers")
+                            .insert({
+                                name: name || null,
+                                email: email,
+                                phone: phone || null,
+                                consent: true,
+                                is_active: true
+                            });
 
                         if (insertError) {
 
@@ -647,9 +534,7 @@ if (form) {
                     }
 
 
-                    /* =========================
-                       ANALYTICS
-                    ========================= */
+                    /* ANALYTICS */
 
                     if (
                         typeof trackEvent ===
@@ -659,15 +544,12 @@ if (form) {
                         trackEvent(
                             "newsletter_subscribe",
                             {
-                                method:
-                                    "website"
+                                method: "website"
                             }
                         );
 
                     }
 
-
-                    /* GOOGLE ANALYTICS */
 
                     if (
                         typeof gtag ===
@@ -678,20 +560,15 @@ if (form) {
                             "event",
                             "newsletter_subscribe",
                             {
-                                method:
-                                    "website",
-
+                                method: "website",
                                 traffic_source:
                                     getTrafficSource(),
-
                                 ...savedUTM
                             }
                         );
 
                     }
 
-
-                    /* META PIXEL */
 
                     if (
                         typeof fbq ===
@@ -710,12 +587,8 @@ if (form) {
                     }
 
 
-                    /* RESET FORM */
-
                     form.reset();
 
-
-                    /* SHOW SUCCESS */
 
                     if (successModal) {
 
@@ -725,9 +598,7 @@ if (form) {
 
                     }
 
-                }
-
-                catch (error) {
+                } catch (error) {
 
                     console.error(
                         "Newsletter error:",
@@ -748,62 +619,6 @@ if (form) {
 }
 
 
-            /* Google Analytics */
-
-            if (
-                typeof gtag === "function"
-            ) {
-
-                gtag(
-                    "event",
-                    "newsletter_subscribe",
-                    {
-
-                        method:
-                            "website",
-
-                        traffic_source:
-                            getTrafficSource(),
-
-                        ...savedUTM
-
-                    }
-                );
-
-            }
-
-
-            /* Meta Pixel */
-
-            if (
-                typeof fbq === "function"
-            ) {
-
-                fbq(
-                    "track",
-                    "Lead",
-                    {
-
-                        source:
-                            getTrafficSource()
-
-                    }
-                );
-
-            }
-
-
-            /* Success message */
-
-            form.reset();
-
-            successModal.classList.add("active");
-
-        }
-    );
-
-}
-
 /* ================================
    SUBSCRIPTION SUCCESS MODAL
 ================================ */
@@ -813,7 +628,11 @@ if (successModal) {
     exitSuccessBtn.addEventListener(
         "click",
         function () {
-            successModal.classList.remove("active");
+
+            successModal.classList.remove(
+                "active"
+            );
+
         }
     );
 
@@ -822,15 +641,21 @@ if (successModal) {
         "click",
         function () {
 
-            successModal.classList.remove("active");
+            successModal.classList.remove(
+                "active"
+            );
 
             const promotions =
-                document.getElementById("promotions");
+                document.getElementById(
+                    "promotions"
+                );
 
             if (promotions) {
+
                 promotions.scrollIntoView({
                     behavior: "smooth"
                 });
+
             }
 
         }
@@ -838,11 +663,17 @@ if (successModal) {
 
 
     document
-        .querySelector(".success-modal-overlay")
+        .querySelector(
+            ".success-modal-overlay"
+        )
         .addEventListener(
             "click",
             function () {
-                successModal.classList.remove("active");
+
+                successModal.classList.remove(
+                    "active"
+                );
+
             }
         );
 
@@ -853,9 +684,15 @@ if (successModal) {
 
             if (
                 event.key === "Escape" &&
-                successModal.classList.contains("active")
+                successModal.classList.contains(
+                    "active"
+                )
             ) {
-                successModal.classList.remove("active");
+
+                successModal.classList.remove(
+                    "active"
+                );
+
             }
 
         }
@@ -863,23 +700,36 @@ if (successModal) {
 
 }
 
+
 /* =========================================
    DYNAMIC PROMOTIONS
 ========================================= */
 
-function formatPromotionDate(dateString) {
+function formatPromotionDate(
+    dateString
+) {
 
     if (!dateString) {
         return "";
     }
 
-    const date = new Date(
-        `${dateString}T00:00:00`
-    );
 
-    if (isNaN(date.getTime())) {
+    const date =
+        new Date(
+            `${dateString}T00:00:00`
+        );
+
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+
         return dateString;
+
     }
+
 
     return date.toLocaleDateString(
         "en-US",
@@ -889,12 +739,17 @@ function formatPromotionDate(dateString) {
             year: "numeric"
         }
     );
+
 }
 
 
-function isPromotionCurrentlyPublished(promotion) {
+function isPromotionCurrentlyPublished(
+    promotion
+) {
 
-    const now = new Date();
+    const now =
+        new Date();
+
 
     /*
      * If PUBLISH START is set,
@@ -910,8 +765,11 @@ function isPromotionCurrentlyPublished(promotion) {
                 promotion.publish_start_at
             );
 
+
         if (
-            !isNaN(publishStart.getTime()) &&
+            !isNaN(
+                publishStart.getTime()
+            ) &&
             now < publishStart
         ) {
 
@@ -936,8 +794,11 @@ function isPromotionCurrentlyPublished(promotion) {
                 promotion.publish_end_at
             );
 
+
         if (
-            !isNaN(publishEnd.getTime()) &&
+            !isNaN(
+                publishEnd.getTime()
+            ) &&
             now > publishEnd
         ) {
 
@@ -1013,6 +874,7 @@ async function loadPublicPromotions() {
             error
         );
 
+
         promoGrid.innerHTML = `
 
             <div class="promo-empty">
@@ -1024,6 +886,7 @@ async function loadPublicPromotions() {
             </div>
 
         `;
+
 
         return;
 
@@ -1068,6 +931,7 @@ async function loadPublicPromotions() {
 
         `;
 
+
         return;
 
     }
@@ -1075,7 +939,6 @@ async function loadPublicPromotions() {
 
     visiblePromotions.forEach(
         promotion => {
-
 
             const card =
                 document.createElement(
@@ -1115,9 +978,7 @@ async function loadPublicPromotions() {
                 image.style.backgroundRepeat =
                     "no-repeat";
 
-            }
-
-            else {
+            } else {
 
                 image.textContent =
                     "ASPIN";
@@ -1164,119 +1025,130 @@ async function loadPublicPromotions() {
                 promotion.title;
 
 
-           /* =========================================
-   DESCRIPTION
-========================================= */
+            /* =========================================
+               DESCRIPTION
+            ========================================= */
 
-const descriptionWrap =
-    document.createElement("div");
-
-descriptionWrap.className =
-    "promo-description-wrap";
-
-
-const description =
-    document.createElement("p");
-
-description.className =
-    "promo-description";
-
-description.textContent =
-    promotion.description ||
-    "";
-
-
-descriptionWrap.appendChild(
-    description
-);
-
-
-/* =========================================
-   READ MORE / SHOW LESS
-========================================= */
-
-const fullDescription =
-    promotion.description || "";
-
-
-/*
- * Only show READ MORE when the
- * description is actually long.
- */
-
-if (
-    fullDescription.length > 120
-) {
-
-    const readMore =
-        document.createElement("button");
-
-    readMore.type =
-        "button";
-
-    readMore.className =
-        "promo-read-more";
-
-    readMore.textContent =
-        "READ MORE";
-
-
-    readMore.addEventListener(
-        "click",
-        function () {
-
-            const card =
-                readMore.closest(
-                    ".promo-card"
+            const descriptionWrap =
+                document.createElement(
+                    "div"
                 );
 
+            descriptionWrap.className =
+                "promo-description-wrap";
+
+
+            const description =
+                document.createElement(
+                    "p"
+                );
+
+            description.className =
+                "promo-description";
+
+
+            description.textContent =
+                promotion.description ||
+                "";
+
+
+            descriptionWrap.appendChild(
+                description
+            );
+
+
+            /* =========================================
+               READ MORE / SHOW LESS
+            ========================================= */
+
+            const fullDescription =
+                promotion.description ||
+                "";
+
+
+            /*
+             * Only show READ MORE when the
+             * description is actually long.
+             */
 
             if (
-                card.classList.contains(
-                    "expanded"
-                )
+                fullDescription.length > 120
             ) {
 
-                card.classList.remove(
-                    "expanded"
-                );
+                const readMore =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                readMore.type =
+                    "button";
+
+
+                readMore.className =
+                    "promo-read-more";
+
 
                 readMore.textContent =
                     "READ MORE";
 
 
-                /*
-                 * Return the visitor to the
-                 * top of the card content.
-                 */
+                readMore.addEventListener(
+                    "click",
+                    function () {
 
-                card.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest"
-                });
+                        const card =
+                            readMore.closest(
+                                ".promo-card"
+                            );
 
-            }
 
-            else {
+                        if (
+                            card.classList.contains(
+                                "expanded"
+                            )
+                        ) {
 
-                card.classList.add(
-                    "expanded"
+                            card.classList.remove(
+                                "expanded"
+                            );
+
+
+                            readMore.textContent =
+                                "READ MORE";
+
+
+                            /*
+                             * Return the visitor to the
+                             * top of the card content.
+                             */
+
+                            card.scrollIntoView({
+                                behavior: "smooth",
+                                block: "nearest"
+                            });
+
+                        } else {
+
+                            card.classList.add(
+                                "expanded"
+                            );
+
+
+                            readMore.textContent =
+                                "SHOW LESS";
+
+                        }
+
+                    }
                 );
 
-                readMore.textContent =
-                    "SHOW LESS";
+
+                descriptionWrap.appendChild(
+                    readMore
+                );
 
             }
-
-        }
-    );
-
-
-    descriptionWrap.appendChild(
-        readMore
-    );
-
-}
 
 
             /* =========================
@@ -1315,9 +1187,7 @@ if (
 
                 `;
 
-            }
-
-            else if (
+            } else if (
                 promotion.start_date
             ) {
 
@@ -1335,9 +1205,7 @@ if (
 
                 `;
 
-            }
-
-            else if (
+            } else if (
                 promotion.end_date
             ) {
 
@@ -1367,9 +1235,11 @@ if (
                     "a"
                 );
 
+
             button.href =
                 promotion.button_url ||
                 "https://aspin.vip/";
+
 
             button.textContent =
                 `${
@@ -1377,8 +1247,10 @@ if (
                     "LEARN MORE"
                 } →`;
 
+
             button.target =
                 "_blank";
+
 
             button.rel =
                 "noopener noreferrer";
@@ -1396,6 +1268,7 @@ if (
                         trackEvent(
                             "promotion_click",
                             {
+
                                 promotion_id:
                                     String(
                                         promotion.id
@@ -1403,6 +1276,7 @@ if (
 
                                 promotion_title:
                                     promotion.title
+
                             }
                         );
 
@@ -1420,9 +1294,11 @@ if (
                 label
             );
 
+
             content.appendChild(
                 title
             );
+
 
             content.appendChild(
                 descriptionWrap
@@ -1456,6 +1332,7 @@ if (
                 image
             );
 
+
             card.appendChild(
                 content
             );
@@ -1469,14 +1346,6 @@ if (
     );
 
 }
-
-
-/* Load promotions when page is ready */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    loadPublicPromotions
-);
 
 
 /* =========================================
@@ -1497,10 +1366,14 @@ function openPromotionModal(
     if (!modal) {
 
         modal =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         modal.id =
             "promotionContentModal";
+
 
         modal.className =
             "promotion-content-modal";
@@ -1595,16 +1468,13 @@ function openPromotionModal(
 
 
 /* =========================================
-   DYNAMIC FAQS
+   DYNAMIC FAQS WITH COLLAPSIBLE CATEGORIES
 ========================================= */
 
 async function loadPublicFaqs() {
 
     const faqContainer =
-        document.querySelector(
-            ".faq-container"
-        );
-
+        document.querySelector(".faq-container");
 
     if (
         !faqContainer ||
@@ -1613,14 +1483,13 @@ async function loadPublicFaqs() {
         return;
     }
 
-
     const {
         data,
         error
     } = await supabaseClient
         .from("faqs")
         .select(
-            "id, question, answer, sort_order, created_at"
+            "id, category, question, answer, sort_order, created_at"
         )
         .eq("is_published", true)
         .order("sort_order", {
@@ -1630,20 +1499,20 @@ async function loadPublicFaqs() {
             ascending: false
         });
 
-
     if (error) {
 
-        console.error(
-            "Unable to load FAQs:",
-            error
-        );
+        console.error("Unable to load FAQs:", {
+            message: error?.message,
+            details: error?.details,
+            hint: error?.hint,
+            code: error?.code,
+            status: error?.status
+        });
 
         return;
     }
 
-
     faqContainer.innerHTML = "";
-
 
     if (!data || !data.length) {
 
@@ -1656,59 +1525,240 @@ async function loadPublicFaqs() {
         return;
     }
 
+    /* =========================================
+       GROUP FAQs BY CATEGORY
+    ========================================= */
 
-    data.forEach(
-        (faq, index) => {
+    const categories = {};
 
-            const details =
-                document.createElement("details");
+    data.forEach((faq) => {
 
-            details.dataset.track =
-                `faq_${faq.id}`;
+        const category =
+            faq.category?.trim() || "GENERAL";
 
+        if (!categories[category]) {
+            categories[category] = [];
+        }
 
-            const summary =
-                document.createElement("summary");
+        categories[category].push(faq);
 
-            summary.textContent =
-                faq.question;
-
-
-            const answer =
-                document.createElement("p");
-
-            answer.textContent =
-                faq.answer;
+    });
 
 
-            details.appendChild(
-                summary
+    /* =========================================
+       CREATE CATEGORY DROPDOWNS
+    ========================================= */
+
+    Object.entries(categories).forEach(
+        ([categoryName, faqs], categoryIndex) => {
+
+            const categoryWrapper =
+                document.createElement("div");
+
+            categoryWrapper.className =
+                "faq-category";
+
+
+            /* CATEGORY HEADER */
+
+            const categoryButton =
+                document.createElement("button");
+
+            categoryButton.type = "button";
+
+            categoryButton.className =
+                "faq-category-toggle";
+
+            categoryButton.setAttribute(
+                "aria-expanded",
+                categoryIndex === 0
+                    ? "true"
+                    : "false"
             );
 
-            details.appendChild(
-                answer
+
+            const categoryTitle =
+                document.createElement("span");
+
+            categoryTitle.className =
+                "faq-category-title";
+
+            categoryTitle.textContent =
+                categoryName;
+
+
+            const categoryArrow =
+                document.createElement("span");
+
+            categoryArrow.className =
+                "faq-category-arrow";
+
+            categoryArrow.textContent =
+                "▼";
+
+
+            categoryButton.appendChild(
+                categoryTitle
+            );
+
+            categoryButton.appendChild(
+                categoryArrow
             );
 
 
-            details.addEventListener(
-                "toggle",
+            /* FAQ ITEMS CONTAINER */
+
+            const questionsContainer =
+                document.createElement("div");
+
+            questionsContainer.className =
+                "faq-category-items";
+
+            if (categoryIndex === 0) {
+                questionsContainer.classList.add(
+                    "active"
+                );
+            }
+
+
+            /* =========================================
+               CREATE FAQ QUESTIONS
+            ========================================= */
+
+            faqs.forEach((faq) => {
+
+                const details =
+                    document.createElement("details");
+
+                details.dataset.track =
+                    `faq_${faq.id}`;
+
+
+                const summary =
+                    document.createElement("summary");
+
+                summary.textContent =
+                    faq.question;
+
+
+                const answer =
+                    document.createElement("p");
+
+                answer.textContent =
+                    faq.answer;
+
+
+                details.appendChild(
+                    summary
+                );
+
+                details.appendChild(
+                    answer
+                );
+
+
+                /* FAQ ANALYTICS */
+
+                details.addEventListener(
+                    "toggle",
+                    function () {
+
+                        if (
+                            this.open &&
+                            typeof trackEvent ===
+                            "function"
+                        ) {
+
+                            trackEvent(
+                                "faq_open",
+                                {
+                                    faq_id:
+                                        String(
+                                            faq.id
+                                        ),
+
+                                    question:
+                                        faq.question
+                                }
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                questionsContainer.appendChild(
+                    details
+                );
+
+            });
+
+
+            /* =========================================
+               CATEGORY TOGGLE
+            ========================================= */
+
+            categoryButton.addEventListener(
+                "click",
                 function () {
 
-                    if (
-                        this.open &&
-                        typeof trackEvent ===
-                        "function"
-                    ) {
+                    const isOpen =
+                        questionsContainer.classList.contains(
+                            "active"
+                        );
 
-                        trackEvent(
-                            "faq_open",
-                            {
-                                faq_id:
-                                    String(faq.id),
 
-                                question:
-                                    faq.question
+                    /*
+                     * Close all categories first
+                     * so only one stays open.
+                     */
+
+                    document
+                        .querySelectorAll(
+                            ".faq-category-items"
+                        )
+                        .forEach(
+                            (container) => {
+
+                                container.classList.remove(
+                                    "active"
+                                );
+
                             }
+                        );
+
+
+                    document
+                        .querySelectorAll(
+                            ".faq-category-toggle"
+                        )
+                        .forEach(
+                            (button) => {
+
+                                button.setAttribute(
+                                    "aria-expanded",
+                                    "false"
+                                );
+
+                            }
+                        );
+
+
+                    /*
+                     * Open clicked category
+                     * if it was previously closed.
+                     */
+
+                    if (!isOpen) {
+
+                        questionsContainer.classList.add(
+                            "active"
+                        );
+
+                        this.setAttribute(
+                            "aria-expanded",
+                            "true"
                         );
 
                     }
@@ -1717,8 +1767,16 @@ async function loadPublicFaqs() {
             );
 
 
+            categoryWrapper.appendChild(
+                categoryButton
+            );
+
+            categoryWrapper.appendChild(
+                questionsContainer
+            );
+
             faqContainer.appendChild(
-                details
+                categoryWrapper
             );
 
         }
@@ -1736,77 +1794,125 @@ document.addEventListener(
     function () {
 
         loadPublicPromotions();
+
         loadPublicFaqs();
 
     }
 );
+
 
 /* =========================
    MOBILE MENU AUTO-CLOSE
 ========================= */
 
 const mobileMenuToggle =
-    document.getElementById("mobile-menu-toggle");
+    document.getElementById(
+        "mobile-menu-toggle"
+    );
+
 
 const mobileMenu =
-    document.querySelector(".navbar nav");
+    document.querySelector(
+        ".navbar nav"
+    );
+
 
 const mobileMenuButton =
-    document.querySelector(".mobile-menu-button");
+    document.querySelector(
+        ".mobile-menu-button"
+    );
 
 
 /* Close menu when clicking a navigation link */
-if (mobileMenu && mobileMenuToggle) {
+
+if (
+    mobileMenu &&
+    mobileMenuToggle
+) {
 
     mobileMenu
         .querySelectorAll("a")
-        .forEach(link => {
+        .forEach(
+            link => {
 
-            link.addEventListener("click", () => {
+                link.addEventListener(
+                    "click",
+                    () => {
 
-                mobileMenuToggle.checked = false;
+                        mobileMenuToggle.checked =
+                            false;
 
-            });
+                    }
+                );
 
-        });
+            }
+        );
+
 }
 
 
 /* Close menu when clicking outside the navbar */
-document.addEventListener("click", (event) => {
 
-    if (!mobileMenuToggle || !mobileMenu) {
-        return;
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !mobileMenuToggle ||
+            !mobileMenu
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !mobileMenuToggle.checked
+        ) {
+
+            return;
+
+        }
+
+
+        const navbar =
+            document.querySelector(
+                ".navbar"
+            );
+
+
+        if (
+            navbar &&
+            !navbar.contains(
+                event.target
+            )
+        ) {
+
+            mobileMenuToggle.checked =
+                false;
+
+        }
+
     }
+);
 
-    if (!mobileMenuToggle.checked) {
-        return;
-    }
-
-    const navbar =
-        document.querySelector(".navbar");
-
-    if (
-        navbar &&
-        !navbar.contains(event.target)
-    ) {
-
-        mobileMenuToggle.checked = false;
-
-    }
-
-});
 
 /* Close menu when pressing ESC */
-document.addEventListener("keydown", (event) => {
 
-    if (
-        event.key === "Escape" &&
-        mobileMenuToggle
-    ) {
+document.addEventListener(
+    "keydown",
+    event => {
 
-        mobileMenuToggle.checked = false;
+        if (
+            event.key === "Escape" &&
+            mobileMenuToggle
+        ) {
+
+            mobileMenuToggle.checked =
+                false;
+
+        }
 
     }
-
-});
+);
